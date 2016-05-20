@@ -327,7 +327,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 77FDP29TA7;
+						DevelopmentTeam = 4MH4G7UVNJ;
 					};
 				};
 			};
