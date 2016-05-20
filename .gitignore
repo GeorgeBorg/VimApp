@@ -2,4 +2,8 @@
 
 ios/build
 
+ios/Pods
+
 node_modules
+
+ios/VimApp.xcworkspace

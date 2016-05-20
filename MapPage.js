@@ -96,6 +96,8 @@ class Menu extends Component {
 		.then((response) => response.json())
 		.then((responseData) => {
 		});
+
+		this.props.onItemSelected('Logout')
 	}
 
   	render() {
@@ -105,7 +107,6 @@ class Menu extends Component {
 				<ScrollView scrollsToTop={false} style={styles.menu}>
 
 			        <LoginButton
-			        	onLogoutFinished={() => this.props.onItemSelected('Logout')}
 						readPermissions={["public_profile", "email", "user_friends"]}
 						onLoginFinished={
 							(error, result) => {
@@ -115,15 +116,18 @@ class Menu extends Component {
 								else if (result.isCancelled) {
 								} 
 								else {
+									
 							    	AccessToken.getCurrentAccessToken().then((response) => {
 								        this._createUser(response);
-								    }).done()
+								    }).done();
 
 								}
-							},
 
-							() => {this.props.onItemSelected('Logout')}
+							}
+							
 						}
+			        	onLogoutFinished={() => this.props.onItemSelected('Logout')}
+
 					/>
 
       			</ScrollView>
