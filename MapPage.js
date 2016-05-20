@@ -116,7 +116,7 @@ class Menu extends Component {
 								else if (result.isCancelled) {
 								} 
 								else {
-									
+
 							    	AccessToken.getCurrentAccessToken().then((response) => {
 								        this._createUser(response);
 								    }).done();
@@ -237,7 +237,7 @@ var MapPage = React.createClass({
 				latitude: 0,
 				longitude: 0
 			},
-			zoom: 14,
+			zoom: 13,
 			animated: true,
 			modalVisible: false,
 			transparent: false,
