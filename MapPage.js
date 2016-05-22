@@ -179,22 +179,16 @@ class SettingsIcon extends Component {
   	}
 }
 
-function urlForQueryAndPage(key, value) {
-
-  	var data = {
-      	lat: "52.0",
-      	long: "4.8",
-      	encoding: 'json',
+function urlForQuery(center) {
+  	var params = {
+      	latitude: center.latitude,
+      	longitude: center.longitude,
   	};
-
-  	data[key] = value;
  
-	var querystring = Object.keys(data)
-	    .map(key => key + '=' + encodeURIComponent(data[key]))
+	var querystring = Object.keys(params)
+	    .map(key => key + '=' + encodeURIComponent(params[key]))
 	    .join('&');
 
-	var get = 'http://localhost:3000/events?' + querystring;
-	alert(get)
 	return 'http://localhost:3000/events?' + querystring;
 };
 
@@ -216,6 +210,9 @@ var MapPage = React.createClass({
 	          			longitude: position.coords.longitude
 	        		}
 				});
+
+				this.onMapLoad(this.state.center);
+
 			},
 
 	      	(error) => alert(error.message),
@@ -274,30 +271,57 @@ var MapPage = React.createClass({
 	    })
 	},
 
+	onMapLoad(center) {
+	  	var query = urlForQuery(center);
+	  	this._getEvents(query);
+	},
+
 	_getEvents(query) {
 		fetch(query)
-		  .then(response => response.json())
-		  .then(json => this._handleResponse(json.response))
-		  .catch(error =>
-		     this.setState({
-		      isLoading: false,
-		      message: 'Something bad happened ' + error
-		   }));
+		.then((response) => {
+			return response.json()
+		})
+		.then((responseData) => {
+			return responseData;
+		})
+		.then((data) => { 
+		 	var data = data
+		 	if (data) {
+		   		this._displayEvents(data);
+		 	}
+		   	else {
+		   		alert('nada')
+		   	}
+		})
+		.catch(function(err) {
+		    console.log(err);
+	  	})
+		.done();
 	},
 
-	_handleResponse(response) {
-		alert(response)
-	  	this.setState({ isLoading: false , message: '' });
-	  	if (response.application_response_code.substr(0, 1) === '1') {
-	    	console.log('Properties found: ' + response.listings.length);
-	  	} else {
-	    	this.setState({ message: 'Location not recognized; please try again.'});
-	  	}
-	},
+	_displayEvents(events) {
+		var VimEvents = [];
+		events.forEach(function(event) {
+        	VimEvents.push({
+        		coordinates: [event.latitude, event.longitude],
+	        	'type': 'point',
+	        	title: event.title,
+	        	subtitle: event.description,
+	        	annotationImage: {
+		          	url: 'https://cldup.com/7NLZklp8zS.png',
+		          	height: 25,
+		          	width: 25
+	        	},
+	        	id: 'marker2'
+			});
+		})
 
-	onSearchPressed() {
-	  	var query = urlForQueryAndPage('place_name', '1');
-	  	this._getEvents(query);
+		// console.log(VimEvents)
+
+		this.setState({        
+			// annotations: [{VimEvents}]
+			
+		})
 	},
 
   	render() {
@@ -330,7 +354,6 @@ var MapPage = React.createClass({
 				        }
 				        rightButton={{ 
 				        	title: 'Create',
-				        	handler: () => this.onSearchPressed()
 				        }}
 				    />
 				
@@ -345,7 +368,7 @@ var MapPage = React.createClass({
 							showsUserLocation={true}
 							ref={mapRef}
 							accessToken={"pk.eyJ1IjoiZ2VvcmdlYm9yZyIsImEiOiJjaWk3bnFqYzEwMDlidm5tMnJyMGVvMTFlIn0.t-lvmWyHHj3EjAypomaztw"}
-							styleURL={this.mapStyles.basic}
+							styleURL={this.mapStyles.streets}
 							userTrackingMode={this.userTrackingMode.follow}
 							centerCoordinate={this.state.center}
 							zoomLevel={this.state.zoom}

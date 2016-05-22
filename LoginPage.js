@@ -114,8 +114,8 @@ class LoginPage extends Component {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				auth_token: response.accessToken,
-				uid: response.userID
+				facebook_auth_token: response.accessToken,
+				facebook_id: response.userID
 			})
 		})
 		.then((response) => response.json())
