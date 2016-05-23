@@ -54,21 +54,21 @@ var MapPage = React.createClass({
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
-	        	var initialPosition = position;
-	        	
-	        	this.setState({
-	        		center: {
-	          			latitude: position.coords.latitude,
-	          			longitude: position.coords.longitude
-	        		}
+			        	var initialPosition = position;
+			        	
+			        	this.setState({
+			        		center: {
+			          			latitude: position.coords.latitude,
+			          			longitude: position.coords.longitude
+			        		}
 				});
 
 				this.onMapLoad(this.state.center);
 
 			},
 
-	      	(error) => alert(error.message),
-	      	{enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+	      		(error) => alert(error.message),
+	      		{enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
 		);
 
 		this.watchID = navigator.geolocation.watchPosition((position) => {});
@@ -88,9 +88,9 @@ var MapPage = React.createClass({
 			},
 			zoom: 13,
 			animated: true,
-      		isOpen: false,
-      		name: 'initial',
-    	}
+	      		isOpen: false,
+	      		name: 'initial',
+    		}
   	},
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -98,20 +98,20 @@ var MapPage = React.createClass({
   	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
   	toggle() {
-	    this.setState({
-	      	isOpen: !this.state.isOpen,
-	    });
+		this.setState({
+			isOpen: !this.state.isOpen,
+		});
   	},
 
   	updateMenuState(isOpen) {
-	    this.setState({ isOpen, });
+		this.setState({ isOpen, });
   	},
 
 	onMenuItemSelected(item) {
-	    this.setState({
-	      	isOpen: false,
-	      	selectedItem: item,
-	    })
+		this.setState({
+			isOpen: false,
+			selectedItem: item,
+		})
 	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ var MapPage = React.createClass({
 			   	}
 			})
 			.catch(function(err) {
-			    console.log(err);
+				console.log(err);
 		  	})
 			.done();
 		}).done();
@@ -169,8 +169,8 @@ var MapPage = React.createClass({
 		})
 
 		this.setState({
-    		annotations:
-      			VimEvents
+    			annotations:
+      				VimEvents
 		});
 
 	},
@@ -183,18 +183,19 @@ var MapPage = React.createClass({
 
 		const menu = <Menu onItemSelected={this.onMenuItemSelected}/> 
 
-    	return (
+    		return (
 		      	<SideMenu
 			        menu={menu}
 			        isOpen={this.state.isOpen}
 			        onChange={(isOpen) => this.updateMenuState(isOpen)}
-		        >
+			>
 
 	    		<View style={{flex: 1,}}>
 
-					<NavigationBar
-				      	title={{ title: 'Map', }}
-				        leftButton={
+				<NavigationBar
+				title={{ title: 'Map', }}
+				leftButton={
+				        	
 				        	<SettingsIcon
 				              	style={{ 
 				              		marginLeft: 8,
@@ -202,11 +203,12 @@ var MapPage = React.createClass({
 				              	}}
 				             	onPress={() => this.toggle()}
 				            />
-				        }
-				        rightButton={{ 
+				}
+				
+				rightButton={{ 
 				        	title: 'Create',
-				        }}
-				    />
+				}}
+			/>
 				
 		        	<View style={styles.container}>
 
@@ -238,7 +240,7 @@ var MapPage = React.createClass({
 				</View>
 
 			</SideMenu>
-    	);
+    		);
 
   	},
 
@@ -278,7 +280,7 @@ class Menu extends Component {
 			AsyncStorage.setItem("access_token", access_token)
 		})
 		.catch(function(err) {
-		    console.log(err);
+			console.log(err);
 	  	})
 		.done();
 
@@ -287,37 +289,38 @@ class Menu extends Component {
 
   	render() {
 
-    	return (
+    		return (
 
-				<ScrollView scrollsToTop={false} style={styles.menu}>
+			<ScrollView scrollsToTop={false} style={styles.menu}>
 
 			        <LoginButton
-						readPermissions={["public_profile", "email", "user_friends"]}
-						onLoginFinished={
-							(error, result) => {
-								if (error) {
-									alert("login has error: " + result.error);
-								} 
-								else if (result.isCancelled) {
-								} 
-								else {
+					readPermissions={["public_profile", "email", "user_friends"]}
+					onLoginFinished={
+						(error, result) => {
+							if (error) {
+								alert("login has error: " + result.error);
+							} 
+							else if (result.isCancelled) {
+							} 
+
+							else {
 
 							    	AccessToken.getCurrentAccessToken().then((response) => {
-								        this._createUser(response);
-								    }).done();
-
-								}
+									this._createUser(response);
+								}).done();
 
 							}
-							
-						}
-			        	onLogoutFinished={() => this.props.onItemSelected('Logout')}
 
-					/>
+						}
+							
+					}
+
+			        		onLogoutFinished={() => this.props.onItemSelected('Logout')}
+				/>
 
       			</ScrollView>
 
-    	);
+    		);
 
   	}
 
@@ -377,13 +380,13 @@ class SettingsIcon extends Component {
 
 function urlForQuery(center) {
   	var params = {
-      	latitude: center.latitude,
-      	longitude: center.longitude,
+	      	latitude: center.latitude,
+	      	longitude: center.longitude,
   	};
  
 	var querystring = Object.keys(params)
-	    .map(key => key + '=' + encodeURIComponent(params[key]))
-	    .join('&');
+	.map(key => key + '=' + encodeURIComponent(params[key]))
+	.join('&');
 
 	return 'http://localhost:3000/events?' + querystring;
 };
@@ -404,17 +407,17 @@ var styles = StyleSheet.create({
 	},
 
   	menu: {
-	    flex: 1,
-	    width: window.width,
-	    height: window.height,
-	    backgroundColor: 'white',
-	    padding: 20,
+		flex: 1,
+		width: window.width,
+		height: window.height,
+		backgroundColor: 'white',
+		padding: 20,
   	},
 
   	item: {
-	    fontSize: 14,
-	    fontWeight: '300',
-	    paddingTop: 5,
+		fontSize: 14,
+		fontWeight: '300',
+		paddingTop: 5,
   	},
 
 });
