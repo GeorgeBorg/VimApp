@@ -19,7 +19,6 @@ import {
   	Image,
   	ScrollView,
   	Dimensions,
-  	AsyncStorage,
 } from 'react-native';
 
 const window = Dimensions.get('window');
@@ -38,169 +37,11 @@ const {
 } = FBSDK;
 
 
-var Button = React.createClass({
-
-  	getInitialState() {
-		return {
-			active: false,
-		};
-  	},
-
-  	_onHighlight() {
-    		this.setState({active: true});
-  	},
-
-  	_onUnhighlight() {
-    		this.setState({active: false});
-  	},
-
-  	render() {
-
-	    	var colorStyle = {
-	      		color: this.state.active ? '#fff' : '#000',
-	    	};
-
-	    	return (
-				<TouchableHighlight
-					onHideUnderlay={this._onUnhighlight}
-					onPress={this.props.onPress}
-					onShowUnderlay={this._onHighlight}
-					style={[styles.button, this.props.style]}
-					underlayColor="white"
-				>
-
-      				<Text style={[styles.buttonText, colorStyle]}>{this.props.children}</Text>
-
-	      		</TouchableHighlight>
-	    	);
-  	}
-});
-
-class Menu extends Component {
-
-  	static propTypes = {
-	    onItemSelected: React.PropTypes.func.isRequired,
-  	};
-
-
-	_createUser(response) {
-		fetch("http://localhost:3000/users", {
-			method: "POST",
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				facebook_auth_token: response.accessToken,
-				facebook_id: response.userID
-			})
-		})
-		.then((response) => {
-			return response.json()
-		})
-		.then((responseData) => {
-			alert(responseData)
-		})
-		.then((data) => { 
-		 	var data = data[0]
-		})
-		
-		this.props.onItemSelected('Logout')
-	}
-
-  	render() {
-
-    	return (
-
-				<ScrollView scrollsToTop={false} style={styles.menu}>
-
-			        <LoginButton
-						readPermissions={["public_profile", "email", "user_friends"]}
-						onLoginFinished={
-							(error, result) => {
-								if (error) {
-									alert("login has error: " + result.error);
-								} 
-								else if (result.isCancelled) {
-								} 
-								else {
-
-							    	AccessToken.getCurrentAccessToken().then((response) => {
-								        this._createUser(response);
-								    }).done();
-
-								}
-
-							}
-							
-						}
-			        	onLogoutFinished={() => this.props.onItemSelected('Logout')}
-
-					/>
-
-      			</ScrollView>
-
-    	);
-
-  	}
-
-}
-
-class SettingsIcon extends Component {
-  	
-  	constructor(props) {
-
-		super(props);
-
-		this.state = {
-			active: false
-		};
-
-	}
-
- 	handlePress(e) {
-    	if (this.props.onPress) {
-      		this.props.onPress(e)
-    	}
-  	}
-
-	_onHighlight() {
-		this.setState({active: true});
-  	}
-
-  	_onUnhighlight() {
-		this.setState({active: false});
-  	}
-
-  	render() {
-    	return (
-	      	<TouchableOpacity
-				onHideUnderlay={this._onUnhighlight}
-				onShowUnderlay={this._onHighlight}
-		        onPress={this.handlePress.bind(this)}
-		        style={this.props.style}
-		        underlayColor="white"
-	       	>
-       			<Icon name="cog" size={30} color="black" />
-      		</TouchableOpacity>
-    	)
-  	}
-}
-
-function urlForQuery(center) {
-  	var params = {
-      	latitude: center.latitude,
-      	longitude: center.longitude,
-  	};
- 
-	var querystring = Object.keys(params)
-	    .map(key => key + '=' + encodeURIComponent(params[key]))
-	    .join('&');
-
-	return 'http://localhost:3000/events?' + querystring;
-};
+// ***************************************************  Main Screen  ************************************************** \\
 
 var MapPage = React.createClass({
+
+  	// ************************************* Initalisers  ********************************** \\
 
 	mixins: [Mapbox.Mixin],
 
@@ -244,24 +85,12 @@ var MapPage = React.createClass({
 			},
 			zoom: 13,
 			animated: true,
-			modalVisible: false,
-			transparent: false,
       		isOpen: false,
       		name: 'initial',
     	}
   	},
 
-  	_setModalVisible(visible) {
-		this.setState({modalVisible: visible});
-  	},
-
-  	_toggleAnimated() {
-		this.setState({animated: !this.state.animated});
-  	},
-
-	_toggleTransparent() {
-		this.setState({transparent: !this.state.transparent});
-	},
+  	// ************************************* Side Menu Functions  ********************************** \\
 
   	toggle() {
 	    this.setState({
@@ -279,6 +108,9 @@ var MapPage = React.createClass({
 	      	selectedItem: item,
 	    })
 	},
+
+	// ************************************* Map GET and display  ********************************** \\
+
 
 	onMapLoad(center) {
 	  	var query = urlForQuery(center);
@@ -335,11 +167,9 @@ var MapPage = React.createClass({
 		})
 	},
 
+	// ******************************************** Render  ******************************************* \\
+
   	render() {
-
-		var modalBackgroundStyle = { backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff', marginTop: 10,};
-
-		var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#fff', padding: 20} : null;
 
 		const menu = <Menu onItemSelected={this.onMenuItemSelected}/> 
 
@@ -393,58 +223,6 @@ var MapPage = React.createClass({
 							onTap={this.onTap} 
 						/>
 
-						<Modal
-							animated={this.state.animated}
-							transparent={this.state.transparent}
-							visible={this.state.modalVisible}
-							onRequestClose={() => {this._setModalVisible(false)}}
-							style={styles.modal}
-						>
-
-						  	<View style={[styles.container, modalBackgroundStyle]}>
-
-						    	<View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-
-						      		<TextInput
-							            style={styles.textinput}
-							            onChangeText={(title) => this.setState({title})}
-							            value={this.state.title} 
-							            placeholder={'Title'}
-						          	/>
-
-						            <TextInput
-							            style={styles.textinput}
-							            onChangeText={(description) => this.setState({description})}
-							            value={this.state.description} 
-							            placeholder={'Description'}
-						            />
-
-						      		<TextInput
-							            style={[styles.textinput, styles.invites]}
-							            onChangeText={(invites) => this.setState({invites})}
-							            value={this.state.invites} 
-							            placeholder={'Invite'}
-						      		/> 
-
-						      		<Button>
-					        			Create!
-						      		</Button>
-
-						      		<Button
-							            onPress={this._setModalVisible.bind(this, false)}
-							            style={styles.modalButton}
-									>
-
-					            		Cancel
-
-						      		</Button>  
-						                  
-						    	</View>
-
-						  	</View>
-
-						</Modal>
-
 					</View>
 
 				</View>
@@ -455,6 +233,179 @@ var MapPage = React.createClass({
   	},
 
 });
+
+// *****************************************************  Button  ***************************************************** \\
+
+var Button = React.createClass({
+
+  	getInitialState() {
+		return {
+			active: false,
+		};
+  	},
+
+  	_onHighlight() {
+
+  	},
+
+  	_onUnhighlight() {
+    		this.setState({active: false});
+  	},
+
+  	render() {
+
+	    	var colorStyle = {
+	      		color: this.state.active ? '#fff' : '#000',
+	    	};
+
+	    	return (
+				<TouchableHighlight
+					onHideUnderlay={this._onUnhighlight}
+					onPress={this.props.onPress}
+					onShowUnderlay={this._onHighlight}
+					style={[styles.button, this.props.style]}
+					underlayColor="white"
+				>
+
+      				<Text style={[styles.buttonText, colorStyle]}>{this.props.children}</Text>
+
+	      		</TouchableHighlight>
+	    	);
+  	}
+});
+
+// *****************************************************  Menu  ***************************************************** \\
+
+class Menu extends Component {
+
+  	static propTypes = {
+	    onItemSelected: React.PropTypes.func.isRequired,
+  	};
+
+
+	_createUser(response) {
+		fetch("http://localhost:3000/users", {
+			method: "POST",
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				facebook_auth_token: response.accessToken,
+				facebook_id: response.userID
+			})
+		})
+		.then((response) => {
+			return response.json()
+		})
+		.then((responseData) => {
+			alert(responseData)
+		})
+		.then((data) => { 
+		 	var data = data[0]
+		})
+
+		this.props.onItemSelected('Logout')
+	}
+
+  	render() {
+
+    	return (
+
+				<ScrollView scrollsToTop={false} style={styles.menu}>
+
+			        <LoginButton
+						readPermissions={["public_profile", "email", "user_friends"]}
+						onLoginFinished={
+							(error, result) => {
+								if (error) {
+									alert("login has error: " + result.error);
+								} 
+								else if (result.isCancelled) {
+								} 
+								else {
+
+							    	AccessToken.getCurrentAccessToken().then((response) => {
+								        this._createUser(response);
+								    }).done();
+
+								}
+
+							}
+							
+						}
+			        	onLogoutFinished={() => this.props.onItemSelected('Logout')}
+
+					/>
+
+      			</ScrollView>
+
+    	);
+
+  	}
+
+}
+
+// *****************************************************  Setting Icon  ***************************************************** \\
+
+
+class SettingsIcon extends Component {
+  	
+  	constructor(props) {
+
+		super(props);
+
+		this.state = {
+			active: false
+		};
+
+	}
+
+ 	handlePress(e) {
+    	if (this.props.onPress) {
+      		this.props.onPress(e)
+    	}
+  	}
+
+	_onHighlight() {
+		this.setState({active: true});
+  	}
+
+  	_onUnhighlight() {
+		this.setState({active: false});
+  	}
+
+  	render() {
+    	return (
+	      	<TouchableOpacity
+				onHideUnderlay={this._onUnhighlight}
+				onShowUnderlay={this._onHighlight}
+		        onPress={this.handlePress.bind(this)}
+		        style={this.props.style}
+		        underlayColor="white"
+	       	>
+       			<Icon name="cog" size={30} color="black" />
+      		</TouchableOpacity>
+    	)
+  	}
+}
+
+// ************************************************  URL Query generator  ********************************************* \\
+
+function urlForQuery(center) {
+  	var params = {
+      	latitude: center.latitude,
+      	longitude: center.longitude,
+  	};
+ 
+	var querystring = Object.keys(params)
+	    .map(key => key + '=' + encodeURIComponent(params[key]))
+	    .join('&');
+
+	return 'http://localhost:3000/events?' + querystring;
+};
+
+// *******************************************************  Styles  *************************************************** \\
 
 var styles = StyleSheet.create({
 	
