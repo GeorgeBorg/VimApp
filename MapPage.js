@@ -234,46 +234,6 @@ var MapPage = React.createClass({
 
 });
 
-// *****************************************************  Button  ***************************************************** \\
-
-var Button = React.createClass({
-
-  	getInitialState() {
-		return {
-			active: false,
-		};
-  	},
-
-  	_onHighlight() {
-
-  	},
-
-  	_onUnhighlight() {
-    		this.setState({active: false});
-  	},
-
-  	render() {
-
-	    	var colorStyle = {
-	      		color: this.state.active ? '#fff' : '#000',
-	    	};
-
-	    	return (
-				<TouchableHighlight
-					onHideUnderlay={this._onUnhighlight}
-					onPress={this.props.onPress}
-					onShowUnderlay={this._onHighlight}
-					style={[styles.button, this.props.style]}
-					underlayColor="white"
-				>
-
-      				<Text style={[styles.buttonText, colorStyle]}>{this.props.children}</Text>
-
-	      		</TouchableHighlight>
-	    	);
-  	}
-});
-
 // *****************************************************  Menu  ***************************************************** \\
 
 class Menu extends Component {
@@ -416,45 +376,6 @@ var styles = StyleSheet.create({
 	innerContainer: {
 		borderRadius: 10,
 		alignItems: 'center',
-	},
-
-	modalButton: {
-		marginTop: 10,
-	},
-
-	modal: {
-		marginTop: 10,
-	},
-
-	button: {
-		borderRadius: 5,
-		flex: 1,
-		height: 44,
-		alignSelf: 'stretch',
-		justifyContent: 'center',
-		overflow: 'hidden',
-		backgroundColor: 'blue',
-		margin: 10,
-		padding: 10,
-	},
-
-	buttonText: {
-		fontSize: 18,
-		margin: 5,
-		textAlign: 'center',
-	},
-
-	textinput: {
-		margin: 10,
-		height: 40, 
-		borderColor: 'gray', 
-		borderWidth: 1,
-		borderRadius: 10,
-		padding: 10,
-	},
-
-	invites: {
-		height: 200,
 	},
 
   	menu: {
