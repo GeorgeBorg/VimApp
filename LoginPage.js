@@ -54,16 +54,6 @@ const styles = StyleSheet.create({
 
 class LoginPage extends Component {
 
-	constructor(props) {
-
-		super(props);
-
-		this.state = {
-			access_token: ''
-		};
-
-	}
-
 	render() {
 		return (
 
