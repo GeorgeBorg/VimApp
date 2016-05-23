@@ -45,33 +45,33 @@ class VimApp extends Component {
 		if (this.state.loggedIn == 'loading') {
 
     		return ( 
-				<Navigator
+			<Navigator
 	          		initialRoute={{ component: LoadingPage}}
 	          		renderScene={renderScene}
 	          		key="first"
-			    />
+			/>
     		)
 
     	}
 	    else if (this.state.loggedIn == false) {
 
     		return (
-				<Navigator
+			<Navigator
 	          		initialRoute={{ component: LoginPage}}
 	          		renderScene={renderScene}
 	          		key="second"
-			    />
+			/>
     		)
 
     	} 
     	else {
 
     		return (
-				<Navigator
+			<Navigator
 	          		initialRoute={{ component: MapPage}}
 	          		renderScene={renderScene}
 	          		key="third"
-			    />
+			/>
     		)
 
     	}
@@ -82,11 +82,12 @@ class VimApp extends Component {
 
 		AccessToken.getCurrentAccessToken().then((response) => {
 			if (response != null) {
-	        	this.setState({loggedIn: true})
-	        }
-	        else {
-	        	this.setState({loggedIn: false})
-	        }
+		        		this.setState({loggedIn: true})
+			}
+			else {
+		        		this.setState({loggedIn: false})
+		        	}
+		        	
 	    }).done();
 
     }
