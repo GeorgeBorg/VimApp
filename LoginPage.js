@@ -24,33 +24,7 @@ const {
 
 var MapPage = require('./MapPage');
 
-const styles = StyleSheet.create({
-
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
-		height: 100,
-	},
-
-	button: {
-		height: 10,
-		backgroundColor: '#48BBEC',
-		borderColor: '#48BBEC',
-		borderWidth: 1,
-		borderRadius: 8,
-		marginBottom: 10,
-		justifyContent: 'center'
-	},
-
-  	buttonText: {
-		fontSize: 18,
-		color: 'white',
-		alignSelf: 'center'
-	},
-
-});
+// ***************************************************  Main Screen  ************************************************** \\
 
 class LoginPage extends Component {
 
@@ -103,17 +77,6 @@ class LoginPage extends Component {
 		);
 	}
 
-	//Create response callback.
-	_responseInfoCallback(error: ?Object, result: ?Object) {
-		if (error) {
-	    	alert('Error posting data: ' + error.toString());
-		} 
-		else {
-	    	this.setState({ email: result.email});
-	    	// this._executeQuery();
-		};
-	}
-
 	_createUser(response) {
 		fetch("http://localhost:3000/users", {
 			method: "POST",
@@ -152,5 +115,35 @@ class LoginPage extends Component {
 	};
 
 }
+
+// ***************************************************  Styles  ************************************************** \\
+
+const styles = StyleSheet.create({
+
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF',
+		height: 100,
+	},
+
+	button: {
+		height: 10,
+		backgroundColor: '#48BBEC',
+		borderColor: '#48BBEC',
+		borderWidth: 1,
+		borderRadius: 8,
+		marginBottom: 10,
+		justifyContent: 'center'
+	},
+
+  	buttonText: {
+		fontSize: 18,
+		color: 'white',
+		alignSelf: 'center'
+	},
+
+});
 
 module.exports = LoginPage;
