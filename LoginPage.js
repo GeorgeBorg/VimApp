@@ -7,6 +7,7 @@ import {
 	StyleSheet,
 	Text,
 	View,
+	AsyncStorage,
 	TouchableHighlight,
 	AlertIOS,
 } from 'react-native';
@@ -53,16 +54,26 @@ const styles = StyleSheet.create({
 
 class LoginPage extends Component {
 
+	constructor(props) {
+
+		super(props);
+
+		this.state = {
+			access_token: ''
+		};
+
+	}
+
 	render() {
 		return (
 
 			<View style={{flex: 1,}}>
 
 				<NavigationBar
-			      	title={{ title: 'Login', }}
-			        leftButton={{ title: 'Back', }}
-			        rightButton={{ title: 'Forward', }}
-			    />
+				        title={{ title: 'Login', }}
+				        leftButton={{ title: 'Back', }}
+				        rightButton={{ title: 'Forward', }}
+				    />
 
 				<View style={styles.container}>
 
@@ -79,8 +90,6 @@ class LoginPage extends Component {
 							    	AccessToken.getCurrentAccessToken().then((response) => {
 								        this._createUser(response);
 								    }).done();
-
-									this._loadMapPage();
 
 								}
 							}
@@ -100,7 +109,6 @@ class LoginPage extends Component {
 	    	alert('Error posting data: ' + error.toString());
 		} 
 		else {
-			console.log(result.email);
 	    	this.setState({ email: result.email});
 	    	// this._executeQuery();
 		};
@@ -118,9 +126,23 @@ class LoginPage extends Component {
 				facebook_id: response.userID
 			})
 		})
-		.then((response) => response.json())
+		.then((response) => {
+			return response.json()
+		})
 		.then((responseData) => {
-		});
+			return responseData;
+		})
+		.then((data) => { 
+			var access_token = JSON.stringify(data.access_token)
+			AsyncStorage.setItem("access_token", access_token)
+		})
+		.catch(function(err) {
+		    console.log(err);
+	  	})
+		.done();
+
+		this._loadMapPage();
+
 	}
 
 	_loadMapPage() {
