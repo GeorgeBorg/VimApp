@@ -18,6 +18,7 @@ import {
   	Image,
   	ScrollView,
   	Dimensions,
+  	AsyncStorage,
 } from 'react-native';
 
 const window = Dimensions.get('window');
@@ -93,9 +94,26 @@ class Menu extends Component {
 				uid: response.userID
 			})
 		})
-		.then((response) => response.json())
+		.then((response) => {
+			return response.json()
+		})
 		.then((responseData) => {
-		});
+			return responseData;
+		})
+		.then((data) => { 
+		 	var data = data
+		 	if (data) {
+				alert(data)
+			}
+		   	else {
+		   		alert('nada')
+		   	}
+		})
+		.catch(function(err) {
+		    console.log(err);
+	  	})
+		.done();
+
 
 		this.props.onItemSelected('Logout')
 	}
@@ -239,6 +257,7 @@ var MapPage = React.createClass({
 			modalVisible: false,
 			transparent: false,
       		isOpen: false,
+      		name: 'initial',
     	}
   	},
 
@@ -287,7 +306,7 @@ var MapPage = React.createClass({
 		.then((data) => { 
 		 	var data = data
 		 	if (data) {
-		   		this._displayEvents(data);
+		   		// this._displayEvents(data);
 		 	}
 		   	else {
 		   		alert('nada')
@@ -303,8 +322,8 @@ var MapPage = React.createClass({
 		var VimEvents = [];
 		events.forEach(function(event) {
         	VimEvents.push({
+        		type: "point",
         		coordinates: [event.latitude, event.longitude],
-	        	'type': 'point',
 	        	title: event.title,
 	        	subtitle: event.description,
 	        	annotationImage: {
@@ -314,12 +333,13 @@ var MapPage = React.createClass({
 	        	},
 	        	id: 'marker2'
 			});
+
 		})
 
-		// console.log(VimEvents)
+		console.log(VimEvents)
 
 		this.setState({        
-			// annotations: [{VimEvents}]
+			annotations: [{VimEvents}]
 			
 		})
 	},
