@@ -28,15 +28,6 @@ var MapPage = require('./MapPage');
 
 class LoginPage extends Component {
 
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			access_token: ''
-		};
-
-	}
-
 	render() {
 		return (
 
