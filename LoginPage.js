@@ -103,17 +103,9 @@ class LoginPage extends Component {
 		);
 	}
 
-	//Create response callback.
-	_responseInfoCallback(error: ?Object, result: ?Object) {
-		if (error) {
-	    	alert('Error posting data: ' + error.toString());
-		} 
-		else {
-	    	this.setState({ email: result.email});
-	    	// this._executeQuery();
-		};
-	}
-
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Create User Request
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	_createUser(response) {
 		fetch("http://localhost:3000/users", {
 			method: "POST",
