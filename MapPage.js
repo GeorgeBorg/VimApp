@@ -157,16 +157,14 @@ var MapPage = React.createClass({
 	},
 
 	_displayEvents(events) {
-		
 		var VimEvents = [];
-
 		events.forEach(function(event) {
         	VimEvents.push({
         		"type": "point",
         		"coordinates": [event.latitude, event.longitude],
 	        	"title": event.title,
 	        	"subtitle": event.description,
-	        	'id': event.title,
+	        	'id': event.id.toString(),
 		    })
 		})
 
