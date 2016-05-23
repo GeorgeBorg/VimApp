@@ -8,6 +8,7 @@ const SideMenu = require('react-native-side-menu');
 import {
 	AppRegistry,
 	StyleSheet,
+	AsyncStorage,
 	Text,
 	View,
 	TouchableHighlight,
@@ -90,31 +91,20 @@ class Menu extends Component {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				auth_token: response.accessToken,
-				uid: response.userID
+				facebook_auth_token: response.accessToken,
+				facebook_id: response.userID
 			})
 		})
 		.then((response) => {
 			return response.json()
 		})
 		.then((responseData) => {
-			return responseData;
+			alert(responseData)
 		})
 		.then((data) => { 
-		 	var data = data
-		 	if (data) {
-				alert(data)
-			}
-		   	else {
-		   		alert('nada')
-		   	}
+		 	var data = data[0]
 		})
-		.catch(function(err) {
-		    console.log(err);
-	  	})
-		.done();
-
-
+		
 		this.props.onItemSelected('Logout')
 	}
 
@@ -296,26 +286,34 @@ var MapPage = React.createClass({
 	},
 
 	_getEvents(query) {
-		fetch(query)
-		.then((response) => {
-			return response.json()
-		})
-		.then((responseData) => {
-			return responseData;
-		})
-		.then((data) => { 
-		 	var data = data
-		 	if (data) {
-		   		// this._displayEvents(data);
-		 	}
-		   	else {
-		   		alert('nada')
-		   	}
-		})
-		.catch(function(err) {
-		    console.log(err);
-	  	})
-		.done();
+		AsyncStorage.getItem("access_token").then((value) => {
+			fetch(query,{
+				method: "GET",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Token token=' + value
+				},})
+			.then((response) => {
+				return response.json()
+			})
+			.then((responseData) => {
+				return responseData;
+			})
+			.then((data) => { 
+			 	var data = data
+			 	if (data) {
+			   		this._displayEvents(data);
+			 	}
+			   	else {
+			   		alert('nada')
+			   	}
+			})
+			.catch(function(err) {
+			    console.log(err);
+		  	})
+			.done();
+		}).done();
 	},
 
 	_displayEvents(events) {
@@ -334,13 +332,6 @@ var MapPage = React.createClass({
 	        	id: 'marker2'
 			});
 
-		})
-
-		console.log(VimEvents)
-
-		this.setState({        
-			annotations: [{VimEvents}]
-			
 		})
 	},
 
