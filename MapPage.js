@@ -132,7 +132,8 @@ var MapPage = React.createClass({
 					'Accept': 'application/json',
 					'Content-Type': 'application/json',
 					'Authorization': 'Token token=' + value
-				},})
+				},
+			})
 			.then((response) => {
 				return response.json()
 			})
@@ -156,22 +157,24 @@ var MapPage = React.createClass({
 	},
 
 	_displayEvents(events) {
+		
 		var VimEvents = [];
+
 		events.forEach(function(event) {
         	VimEvents.push({
-        		type: "point",
-        		coordinates: [event.latitude, event.longitude],
-	        	title: event.title,
-	        	subtitle: event.description,
-	        	annotationImage: {
-		          	url: 'https://cldup.com/7NLZklp8zS.png',
-		          	height: 25,
-		          	width: 25
-	        	},
-	        	id: 'marker2'
-			});
-
+        		"type": "point",
+        		"coordinates": [event.latitude, event.longitude],
+	        	"title": event.title,
+	        	"subtitle": event.description,
+	        	'id': event.title,
+		    })
 		})
+
+		this.setState({
+    		annotations:
+      			VimEvents
+		});
+
 	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -270,11 +273,16 @@ class Menu extends Component {
 			return response.json()
 		})
 		.then((responseData) => {
-			alert(responseData)
+			return responseData;
 		})
 		.then((data) => { 
-		 	var data = data[0]
+			var access_token = JSON.stringify(data.access_token)
+			AsyncStorage.setItem("access_token", access_token)
 		})
+		.catch(function(err) {
+		    console.log(err);
+	  	})
+		.done();
 
 		this.props.onItemSelected('Logout')
 	}
