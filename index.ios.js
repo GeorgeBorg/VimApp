@@ -87,7 +87,6 @@ class VimApp extends Component {
 			else {
 		        		this.setState({loggedIn: false})
 		        	}
-		        	
 	    }).done();
 
     }

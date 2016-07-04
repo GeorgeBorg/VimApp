@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import NavigationBar from 'react-native-navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
-const SideMenu = require('react-native-side-menu');
+var SettingsPage = require('./SettingsPage');
 
 import {
 	AppRegistry,
@@ -94,25 +94,14 @@ var MapPage = React.createClass({
   	},
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-  	   Side Menu Functions
+  	   Load Settings 
   	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
-  	toggle() {
-		this.setState({
-			isOpen: !this.state.isOpen,
+  	openSettingsPage() {
+		this.props.navigator.resetTo({
+			component: SettingsPage
 		});
   	},
-
-  	updateMenuState(isOpen) {
-		this.setState({ isOpen, });
-  	},
-
-	onMenuItemSelected(item) {
-		this.setState({
-			isOpen: false,
-			selectedItem: item,
-		})
-	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Map GET and display
@@ -169,8 +158,8 @@ var MapPage = React.createClass({
 		})
 
 		this.setState({
-    			annotations:
-      				VimEvents
+			annotations:
+  				VimEvents
 		});
 
 	},
@@ -181,35 +170,26 @@ var MapPage = React.createClass({
 
   	render() {
 
-		const menu = <Menu onItemSelected={this.onMenuItemSelected}/> 
-
     		return (
-		      	<SideMenu
-			        menu={menu}
-			        isOpen={this.state.isOpen}
-			        onChange={(isOpen) => this.updateMenuState(isOpen)}
-			>
 
 	    		<View style={{flex: 1,}}>
 
-				<NavigationBar
-				title={{ title: 'Map', }}
-				leftButton={
-				        	
+					<NavigationBar
+						title={{ title: 'Map', }}
+						leftButton={   	
 				        	<SettingsIcon
 				              	style={{ 
 				              		marginLeft: 8,
 				              		marginTop: 8,
 				              	}}
-				             	onPress={() => this.toggle()}
+				             	onPress={() => this.openSettingsPage()}
 				            />
-				}
-				
-				rightButton={{ 
+						}
+						rightButton={{ 
 				        	title: 'Create',
-				}}
-			/>
-				
+						}}
+					/>
+					
 		        	<View style={styles.container}>
 
 		 				<Mapbox
@@ -239,92 +219,11 @@ var MapPage = React.createClass({
 
 				</View>
 
-			</SideMenu>
     		);
 
   	},
 
 });
-
-/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-   Menu
------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-class Menu extends Component {
-
-  	static propTypes = {
-	    onItemSelected: React.PropTypes.func.isRequired,
-  	};
-
-
-	_createUser(response) {
-		fetch("http://localhost:3000/users", {
-			method: "POST",
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				facebook_auth_token: response.accessToken,
-				facebook_id: response.userID
-			})
-		})
-		.then((response) => {
-			return response.json()
-		})
-		.then((responseData) => {
-			return responseData;
-		})
-		.then((data) => { 
-			var access_token = JSON.stringify(data.access_token)
-			AsyncStorage.setItem("access_token", access_token)
-		})
-		.catch(function(err) {
-			console.log(err);
-	  	})
-		.done();
-
-		this.props.onItemSelected('Logout')
-	}
-
-  	render() {
-
-    		return (
-
-			<ScrollView scrollsToTop={false} style={styles.menu}>
-
-			        <LoginButton
-					readPermissions={["public_profile", "email", "user_friends"]}
-					onLoginFinished={
-						(error, result) => {
-							if (error) {
-								alert("login has error: " + result.error);
-							} 
-							else if (result.isCancelled) {
-							} 
-
-							else {
-
-							    	AccessToken.getCurrentAccessToken().then((response) => {
-									this._createUser(response);
-								}).done();
-
-							}
-
-						}
-							
-					}
-
-			        		onLogoutFinished={() => this.props.onItemSelected('Logout')}
-				/>
-
-      			</ScrollView>
-
-    		);
-
-  	}
-
-}
 
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
    Settings Icon
