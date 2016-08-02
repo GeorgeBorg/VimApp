@@ -4,8 +4,6 @@ import React, { Component } from 'react';
 import NavigationBar from 'react-native-navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-// var SettingsPage = require('./SettingsPage')
-
 import {
 	AppRegistry,
 	StyleSheet,
@@ -244,22 +242,20 @@ var MapPage = React.createClass({
 	},
 
 	_displayEvents(events) {
-		
 		var VimEvents = [];
-
 		events.forEach(function(event) {
-			VimEvents.push({
-				"type": "point",
-				"coordinates": [event.latitude, event.longitude],
-				"title": event.title,
-				"subtitle": event.description,
-				'id': event.title,
-			})
+        		VimEvents.push({
+        		"type": "point",
+        		"coordinates": [event.latitude, event.longitude],
+	        	"title": event.title,
+	        	"subtitle": event.description,
+	        	'id': event.id.toString(),
+		    })
 		})
 
 		this.setState({
-    			annotations:
-      				VimEvents
+			annotations:
+  				VimEvents
 		});
 
 	},
@@ -302,7 +298,6 @@ var MapPage = React.createClass({
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Render
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
-
   	render() {
 
     		return (
@@ -346,6 +341,7 @@ var MapPage = React.createClass({
 				 	<Button onPress={this.closeForm} style={styles.button}>Cancel</Button>
 
 				</Modal>
+
 
 				<Modal style={[styles.modal]} ref={"settings_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 

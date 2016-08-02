@@ -10,6 +10,7 @@ import {
 	AsyncStorage,
 	TouchableHighlight,
 	AlertIOS,
+	Image,
 } from 'react-native';
 
 const FBSDK = require('react-native-fbsdk');
@@ -28,18 +29,47 @@ var MapPage = require('./MapPage');
    Main Screen
 ------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
-class LoginPage extends Component {
+class SettingsPage extends Component {
+
+	constructor(props) {
+
+		super(props);
+
+		this.state = {
+			facebook_picture: 'loading'
+		};
+
+	}
+
+  	componentDidMount() {
+	    this._loadInitialState().done();
+  	}
+
+  	async _loadInitialState() {
+		try {
+			var profile_picture = await AsyncStorage.getItem("facebook_picture").then((value) => {return value});
+		} catch (error) {
+	      	this._appendMessage('AsyncStorage error: ' + error.message);
+	    };
+
+	    this.setState({facebook_picture: profile_picture});
+    }
 
 	render() {
+ 
 		return (
-
 			<View style={{flex: 1,}}>
 
 				<NavigationBar
-					title={{ title: 'Login', }}
+					title={{ title: 'Settings', }}
 				/>
 
 				<View style={styles.container}>
+
+					<Image
+				        style={styles.icon}
+				        source={{uri: this.state.facebook_picture}}
+				    />
 
 					<LoginButton
 						readPermissions={["public_profile", "email", "user_friends"]}
@@ -90,7 +120,6 @@ class LoginPage extends Component {
 			return responseData;
 		})
 		.then((data) => { 
-			var facebook_picture = (data.facebook_picture)
 			var access_token = JSON.stringify(data.access_token)
 			var facebook_picture = (data.facebook_picture)
 			AsyncStorage.setItem("access_token", access_token)
@@ -101,11 +130,13 @@ class LoginPage extends Component {
 	  	})
 		.done();
 
-		this._loadMapPage();
+		var MapPage = require('./MapPage');
+
+		this._loadMapPage(MapPage);
 
 	}
 
-	_loadMapPage() {
+	_loadMapPage(MapPage) {
 		this.props.navigator.resetTo({
 			component: MapPage
 		});
@@ -143,6 +174,11 @@ const styles = StyleSheet.create({
 		alignSelf: 'center'
 	},
 
+	icon: {
+	    width: 15,
+	    height: 15,
+  	},
+
 });
 
-module.exports = LoginPage;
+module.exports = SettingsPage;
