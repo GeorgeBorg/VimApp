@@ -37,8 +37,6 @@ class LoginPage extends Component {
 
 				<NavigationBar
 					title={{ title: 'Login', }}
-					leftButton={{ title: 'Back', }}
-					rightButton={{ title: 'Forward', }}
 				/>
 
 				<View style={styles.container}>
@@ -92,11 +90,13 @@ class LoginPage extends Component {
 			return responseData;
 		})
 		.then((data) => { 
+			var facebook_picture = (data.facebook_picture)
 			var access_token = JSON.stringify(data.access_token)
 			AsyncStorage.setItem("access_token", access_token)
+			AsyncStorage.setItem("facebook_picture", facebook_picture)
 		})
 		.catch(function(err) {
-		    console.log(err);
+			console.log(err);
 	  	})
 		.done();
 
