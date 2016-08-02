@@ -74,7 +74,7 @@ var MapPage = React.createClass({
 			          			longitude: position.coords.longitude
 			        		}
 				});
-				this.onMapLoad(this.state.center);
+				this._onMapLoad(this.state.center);
 
 			},
 
@@ -92,11 +92,15 @@ var MapPage = React.createClass({
   	async _loadInitialState() {
 		try {
 			var profile_picture = await AsyncStorage.getItem("facebook_picture").then((value) => {return value});
+			var user_name = await AsyncStorage.getItem("user_name").then((value) => {return value});
+
 		} catch (error) {
 	      	this._appendMessage('AsyncStorage error: ' + error.message);
 	    };
 
 	    this.setState({facebook_picture: profile_picture});
+	    this.setState({user_name: user_name});
+
    	 },
 
   	componentWillUnmount: function() {
@@ -167,7 +171,7 @@ var MapPage = React.createClass({
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	_createEvent(details) {
 		AsyncStorage.getItem("access_token").then((value) => {
-			fetch("http://localhost:3000/events", {
+			fetch("http://4c3eff75.eu.ngrok.io/events", {
 				method: "POST",
 				headers: {
 					'Accept': 'application/json',
@@ -189,7 +193,7 @@ var MapPage = React.createClass({
 				return responseData;
 			})
 			.then((data) => { 
-				var query = urlForQuery(this.state.center);
+				var query = this._urlForQuery(this.state.center);
 	  			this._getEvents(query);
 			})
 			.catch(function(err) {
@@ -200,12 +204,24 @@ var MapPage = React.createClass({
 	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-	   Map GET and display
+	   GET Events & Display
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
+	_urlForQuery(center) {
+	  	var params = {
+		      	latitude: center.latitude,
+		      	longitude: center.longitude,
+	  	};
+	 
+		var querystring = Object.keys(params)
+		.map(key => key + '=' + encodeURIComponent(params[key]))
+		.join('&');
 
-	onMapLoad(center) {
-	  	var query = urlForQuery(center);
+		return 'http://4c3eff75.eu.ngrok.io/events?' + querystring;
+	},
+
+	_onMapLoad(center) {
+	  	var query = this._urlForQuery(center);
 	  	this._getEvents(query);
 	},
 
@@ -266,7 +282,7 @@ var MapPage = React.createClass({
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 	_createUser(response) {
-		fetch("http://localhost:3000/users", {
+		fetch("http://4c3eff75.eu.ngrok.io/users", {
 			method: "POST",
 			headers: {
 				'Accept': 'application/json',
@@ -286,8 +302,11 @@ var MapPage = React.createClass({
 		.then((data) => { 
 			var access_token = JSON.stringify(data.access_token)
 			var facebook_picture = (data.facebook_picture)
+			var user_name = (data.name)
 			AsyncStorage.setItem("access_token", access_token)
 			AsyncStorage.setItem("facebook_picture", facebook_picture)
+			AsyncStorage.setItem("user_name", user_name)
+			alert(user_name)
 		})
 		.catch(function(err) {
 			console.log(err);
@@ -303,6 +322,8 @@ var MapPage = React.createClass({
     		return (
 
 	    		<View style={styles.container}>
+
+
 
  				<Mapbox
 					style={{flex: 1}}
@@ -327,28 +348,67 @@ var MapPage = React.createClass({
 					onTap={this.onTap} 
 				/>
 
-				<Button onPress={this.openSettings}  style={styles.settings_button}>Love Me</Button>
+				<TouchableOpacity onPress={this.openSettings} style={{alignItems: 'center'}}>
+				
+					<Image 
+						style={styles.settings_button}
+	    					source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
+	    				/>
 
-				<Button onPress={this.openForm} style={styles.create_button}>Create Vim</Button>
+				</TouchableOpacity>
+
+				<Button onPress={this.openForm} style={styles.create_button}>CREATE A VIM</Button>
 
 				<Modal style={[styles.modal]} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+					
+					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+						
+						<TouchableOpacity onPress={this.closeForm} style={{alignItems: 'center'}}>
+						
+							<Image 
+								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								style={styles.arrow_icon}
+							/>
+						
+						</TouchableOpacity>
+					</View>
 
-					<Form
-						ref="form"
-						type={Event}
-					/>
-				  	<Button onPress={this.saveEvent} style={styles.button}>Create</Button>
-				 	<Button onPress={this.closeForm} style={styles.button}>Cancel</Button>
+					<View style={{marginTop:30}}>				  		
+						<Form
+							ref="form"
+							type={Event}
+						/>
+					</View>
+					
+					<Button onPress={this.saveEvent} style={styles.button}>CREATE</Button>
+
+
 
 				</Modal>
 
 
 				<Modal style={[styles.modal]} ref={"settings_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+					
+					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+						
+						<TouchableOpacity onPress={this.closeSettings} style={{alignItems: 'center'}}>
+						
+							<Image 
+								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								style={styles.arrow_icon}
+							/>
+						
+						</TouchableOpacity>
+					</View>
 
 					<Image
 						style={styles.facebook_icon}
 						source={{uri: this.state.facebook_picture}}
 					/>
+
+					<Text style={styles.profile_name}>
+						{this.state.user_name}
+					</Text>
 
 					<LoginButton
 						style={styles.login}
@@ -369,8 +429,7 @@ var MapPage = React.createClass({
 							}
 						}
 					/>
-
-				 	<Button onPress={this.closeSettings} style={styles.button}>Cancel</Button>
+		
 
 				</Modal>
 
@@ -382,23 +441,6 @@ var MapPage = React.createClass({
 
 });
 
-/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-   URL for GET events
------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-function urlForQuery(center) {
-  	var params = {
-	      	latitude: center.latitude,
-	      	longitude: center.longitude,
-  	};
- 
-	var querystring = Object.keys(params)
-	.map(key => key + '=' + encodeURIComponent(params[key]))
-	.join('&');
-
-	return 'http://localhost:3000/events?' + querystring;
-};
-
 
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
    Styles
@@ -409,54 +451,86 @@ var styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: 'center',
+
+	},
+
+	settings_container: {
+		alignItems: 'center',
+		flex:1,
 	},
 
 	modal: {
-		justifyContent: 'center',
 		alignItems: 'center',
 		height:400,
 		width:300,
-		borderRadius: 5,
+		borderRadius: 2,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.3,
 	},
 
 	button: {
-		backgroundColor: '#3B5998',
+		backgroundColor: '#52D68A',
 		padding: 10,
 		color: "white",
-		width: 150,
-		marginBottom: 10,
-		alignSelf: 'stretch',
+		marginTop:20,
+		width: 170,
+		letterSpacing: 1,
+		fontSize: 14,
 		justifyContent: 'center'
 	},
 
 	create_button: {
 		position: 'absolute',
-		backgroundColor: "#3B5998",
+		backgroundColor: "rgba(255,115,113,0.95)",
 		color: "white",
-		padding: 10,
-		bottom: 0,
+		padding: 15,
+		margin: 10,
+		bottom: 12,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.45,
+		letterSpacing: 1,
+		fontSize: 14,
+		fontFamily: 'Helvetica',
+		width: 355,
 	},
 
 	settings_button: {
 		position: 'absolute',
-		backgroundColor: '#3B5998',
-		bottom: 0,
-		right: 0,
-		color: 'white',
+		bottom: 610,
+		right: 10,
+		width:30,
+		height:30,
 		padding:10,
 	},
 
 	facebook_icon: {
-	    width: 100,
-	    height: 100,
+		width: 100,
+		height: 100,
+		marginTop:40,
 		borderRadius: 50,
-		marginBottom: 150,
+  	},
+
+  	profile_name: {
+  		color: "black",
+  		fontSize:18,
+  		fontWeight: "600",
+  		color: "#333",
+  		marginTop:10,
+  	},
+
+  	arrow_icon: {
+		width: 30,
+		height: 30,
   	},
 
 	login: {
 		height: 30,
-		marginBottom: 50,
-		width: 90,
+		marginTop:120,
+		width:200,
 	},
 
 });

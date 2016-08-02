@@ -72,7 +72,7 @@ class LoginPage extends Component {
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 	_createUser(response) {
-		fetch("http://localhost:3000/users", {
+		fetch("http://4c3eff75.eu.ngrok.io/users", {
 			method: "POST",
 			headers: {
 				'Accept': 'application/json',

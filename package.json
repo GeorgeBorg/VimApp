@@ -8,6 +8,7 @@
   "dependencies": {
     "react": "^0.14.8",
     "react-native": "^0.25.1",
+    "react-native-animatable": "^0.6.1",
     "react-native-fbsdk": "^0.1.0",
     "react-native-fbsdklogin": "0.0.8",
     "react-native-mapbox-gl": "^4.1.1",
