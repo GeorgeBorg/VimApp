@@ -149,51 +149,42 @@ var MapPage = React.createClass({
 		this.refs.create_button.bounceInUp(800)
 	},
 
-	openSettings: function(id) {
-		this.refs.settings_modal.open();
-	},
-
-	closeSettings: function(id) {
-		this.refs.settings_modal.close();
-	},
-
 	openEvent: function(id) {
 	  	this.setState({event_title: id.title});
 	  	this.setState({event_description: id.description});
 	 	this.refs.event_modal.open();
 		this.refs.create_button.bounceOutDown(500);
 		this.refs.join_button.bounceInUp(500);
+	},
 
-	  },
-
-	  closeEvent: function(id) {
-	    this.refs.event_modal.close();
-	  },
-
-	  onEventClosed: function(){
+	closeEvent: function(id) {
+		this.refs.event_modal.close();
 		this.refs.create_button.bounceInUp(500);
 		this.refs.join_button.bounceOutDown(500);
+	},
 
-	  },
 
- 	  openSettings: function(id) {
-	    this.refs.settings_modal.open();
-	  },
+  	openSettings: function(id) {
+  		this.refs.join_button.bounceOutDown(500);
+		this.refs.event_modal.close();
+		this.refs.settings_modal.open();
+	},
 
-	  closeSettings: function(id) {
-	    this.refs.settings_modal.close();
-	  },
+	closeSettings: function(id) {
+		this.refs.settings_modal.close();
+		this.refs.create_button.bounceInUp(500);
+	},
 
-	  onClose: function() {
-	  },
+	onClose: function() {
+	},
 
-	  onOpen: function() {
+	onOpen: function() {
 
-	  },
+	},
 
-	  onClosingState: function(state) {
+	onClosingState: function(state) {
 
-	  },
+	},
 
 	saveEvent: function () {
 		// call getValue() to get the values of the form
@@ -205,9 +196,9 @@ var MapPage = React.createClass({
 		}
 	},
 
-  	  joinEvent: function () {
-	    // call getValue() to get the values of the form
-	  },
+	joinEvent: function () {
+		// call getValue() to get the values of the form
+	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Create Event
@@ -441,7 +432,7 @@ var MapPage = React.createClass({
 				   Settings Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.closeSettings} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 
 					<View style={{width:theWidth, backgroundColor: "#F7F7F7"}}>	
 					
