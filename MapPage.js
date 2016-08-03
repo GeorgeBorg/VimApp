@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import NavigationBar from 'react-native-navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+
 import {
 	AppRegistry,
 	StyleSheet,
@@ -65,8 +66,6 @@ var MapPage = React.createClass({
 
   	watchID: (null: ?number),
 
-
-
   	componentDidMount: function() {
 
 		navigator.geolocation.getCurrentPosition(
@@ -118,13 +117,14 @@ var MapPage = React.createClass({
 				latitude: 0,
 				longitude: 0
 			},
-			zoom: 8,
+			zoom: 14,
 			animated: true,
 	      		isOpen: false,
 			swipeToClose: true,
 			sliderValue: 0.3,
 	      		name: 'initial',
     		}
+
   	},
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -139,24 +139,33 @@ var MapPage = React.createClass({
 	    this.refs.form_modal.close();
 	  },
 
+	  openEvent: function(id) {
+	  	this.setState({event_title: id.title});
+	  	this.setState({event_description: id.description});
+	    this.refs.event_modal.open();
+	  },
+
+	  closeEvent: function(id) {
+	    this.refs.event_modal.close();
+	  },
+
  	  openSettings: function(id) {
 	    this.refs.settings_modal.open();
 	  },
 
-	   closeSettings: function(id) {
+	  closeSettings: function(id) {
 	    this.refs.settings_modal.close();
 	  },
 
 	  onClose: function() {
-	    console.log('Modal just closed');
 	  },
 
 	  onOpen: function() {
-	    console.log('Modal just opened');
+
 	  },
 
 	  onClosingState: function(state) {
-	    console.log('the open/close of the swipeToClose just changed');
+
 	  },
 
 	  saveEvent: function () {
@@ -168,6 +177,10 @@ var MapPage = React.createClass({
 	 	this.refs.form_modal.close();
 
 	    }
+	  },
+
+  	  joinEvent: function () {
+	    // call getValue() to get the values of the form
 	  },
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -264,11 +277,9 @@ var MapPage = React.createClass({
 	_displayEvents(events) {
 		var VimEvents = [];
 		events.forEach(function(event) {
-        		VimEvents.push({
+    		VimEvents.push({
         		"type": "point",
         		"coordinates": [event.latitude, event.longitude],
-	        	"title": event.title,
-	        	"subtitle": event.description,
 	        	'id': event.id.toString(),
 		    })
 		})
@@ -277,6 +288,51 @@ var MapPage = React.createClass({
 			annotations:
   				VimEvents
 		});
+
+	},
+
+	fetchInfo(event) {
+	  	var infoQuery = this._urlForInfoQuery(event);
+	  	this._getEventInfo(infoQuery);
+	  	console.log('worked');
+	},
+
+	_urlForInfoQuery(event) {
+		var id = event.id;
+		return 'http://localhost:3000/events/' + id;
+	},
+
+	_getEventInfo(infoQuery) {
+
+		AsyncStorage.getItem("access_token").then((value) => {
+			fetch(infoQuery,{
+				method: "GET",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Token token=' + value
+				},
+			})
+			.then((response) => {
+				return response.json()
+			})
+			.then((responseData) => {
+				return responseData;
+			})
+			.then((data) => { 
+			 	var data = data
+			 	if (data) {
+			   		this.openEvent(data);
+			 	}
+			   	else {
+			   		alert('nada')
+			   	}
+			})
+			.catch(function(err) {
+				console.log(err);
+		  	})
+			.done();
+		}).done();
 
 	},
 
@@ -306,11 +362,12 @@ var MapPage = React.createClass({
 					onRegionChange={this.onRegionChange}
 					onRegionWillChange={this.onRegionWillChange}
 					annotations={this.state.annotations}
-					onOpenAnnotation={this.onOpenAnnotation}
-					onRightAnnotationTapped={this.onRightAnnotationTapped}
+					onOpenAnnotation={this.fetchInfo}
+					onRightAnnotationTapped={this.fetchInfo}
 					onUpdateUserLocation={this.onUpdateUserLocation}
 					onLongPress={this.onLongPress}
 					onTap={this.onTap} 
+					attributionButtonIsHidden={false}
 				/>
 
 				<TouchableOpacity onPress={this.openSettings} style={{alignItems: 'center'}}>
@@ -324,6 +381,37 @@ var MapPage = React.createClass({
 
 				<Button onPress={this.openForm} style={styles.create_button}>CREATE A VIM</Button>
 
+				<Modal style={[styles.modal]} ref={"event_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+					
+					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+						
+						<TouchableOpacity onPress={this.closeEvent} style={{alignItems: 'center'}}>
+						
+							<Image 
+								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								style={styles.arrow_icon}
+							/>
+						
+						</TouchableOpacity>
+
+					</View>
+
+					<View style={{marginTop:30}}>
+
+						<Text style={styles.profile_name}>
+							{this.state.event_title}
+						</Text>
+
+						<Text style={styles.profile_name}>
+							{this.state.event_description}
+						</Text>
+
+					</View>
+
+					<Button onPress={this.joinEvent} style={styles.button}>JOIN</Button>
+
+				</Modal>
+
 				<Modal style={[styles.modal]} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 					
 					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
@@ -336,13 +424,16 @@ var MapPage = React.createClass({
 							/>
 						
 						</TouchableOpacity>
+
 					</View>
 
-					<View style={{marginTop:30}}>				  		
+					<View style={{marginTop:30}}>
+
 						<Form
 							ref="form"
 							type={Event}
 						/>
+
 					</View>
 
 					<Button onPress={this.saveEvent} style={styles.button}>CREATE</Button>
@@ -453,15 +544,10 @@ var styles = StyleSheet.create({
 	settings_button: {
 		position: 'absolute',
 		bottom: 610,
-		right: 10,
+		left: 10,
 		width:30,
 		height:30,
 		padding:10,
-	},
-
-	photo_container: {
-		position: 'absolute',
-		top: 200,
 	},
 
 	facebook_icon: {
