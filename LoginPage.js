@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
 	button: {
 		position: 'absolute',
 		backgroundColor: "rgba(255,115,113,0.95)",
-		color: "white",
 		padding: 15,
 		margin: 10,
 		bottom: 12,
@@ -136,9 +135,6 @@ const styles = StyleSheet.create({
 		shadowOffset: {width: 1, height: 1},
 		shadowColor: 'black',
 		shadowOpacity: 0.45,
-		letterSpacing: 1,
-		fontSize: 14,
-		fontFamily: 'Helvetica',
 		width: 355,
 	},
 
