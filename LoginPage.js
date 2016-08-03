@@ -68,7 +68,7 @@ class LoginPage extends Component {
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 	_createUser(response) {
-		fetch("http://4c3eff75.eu.ngrok.io/users", {
+		fetch("http://localhost:3000/users", {
 			method: "POST",
 			headers: {
 				'Accept': 'application/json',
@@ -86,11 +86,12 @@ class LoginPage extends Component {
 			return responseData;
 		})
 		.then((data) => { 
-			var facebook_picture = (data.facebook_picture)
 			var access_token = JSON.stringify(data.access_token)
 			var facebook_picture = (data.facebook_picture)
+			var user_name = (data.name)
 			AsyncStorage.setItem("access_token", access_token)
 			AsyncStorage.setItem("facebook_picture", facebook_picture)
+			AsyncStorage.setItem("user_name", user_name)
 		})
 		.catch(function(err) {
 			console.log(err);

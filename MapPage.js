@@ -176,7 +176,7 @@ var MapPage = React.createClass({
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	_createEvent(details) {
 		AsyncStorage.getItem("access_token").then((value) => {
-			fetch("http://4c3eff75.eu.ngrok.io/events", {
+			fetch("http://localhost:3000/events", {
 				method: "POST",
 				headers: {
 					'Accept': 'application/json',
@@ -222,7 +222,7 @@ var MapPage = React.createClass({
 		.map(key => key + '=' + encodeURIComponent(params[key]))
 		.join('&');
 
-		return 'http://4c3eff75.eu.ngrok.io/events?' + querystring;
+		return 'http://localhost:3000/events?' + querystring;
 	},
 
 	_onMapLoad(center) {
@@ -283,43 +283,6 @@ var MapPage = React.createClass({
 
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-	   Create User Request
-	------------------------------------------------------------------------------------------------------------------------------------------------------ */
-
-	_createUser(response) {
-		fetch("http://4c3eff75.eu.ngrok.io/users", {
-			method: "POST",
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				facebook_auth_token: response.accessToken,
-				facebook_id: response.userID
-			})
-		})
-		.then((response) => {
-			return response.json()
-		})
-		.then((responseData) => {
-			return responseData;
-		})
-		.then((data) => { 
-			var access_token = JSON.stringify(data.access_token)
-			var facebook_picture = (data.facebook_picture)
-			var user_name = (data.name)
-			AsyncStorage.setItem("access_token", access_token)
-			AsyncStorage.setItem("facebook_picture", facebook_picture)
-			AsyncStorage.setItem("user_name", user_name)
-			alert(user_name)
-		})
-		.catch(function(err) {
-			console.log(err);
-	  	})
-		.done();
-	},
-
-	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Render
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
   	render() {
@@ -355,7 +318,7 @@ var MapPage = React.createClass({
 				
 					<Image 
 						style={styles.settings_button}
-    					source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
+    						source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
     				/>
 
 				</TouchableOpacity>
@@ -400,21 +363,6 @@ var MapPage = React.createClass({
 					<LoginButton
 						style={styles.login}
 						readPermissions={["public_profile", "email", "user_friends"]}
-						onLoginFinished={
-							(error, result) => {
-								if (error) {
-									alert("login has error: " + result.error);
-								} 
-								else if (result.isCancelled) {
-								} 
-								else {
-							    	AccessToken.getCurrentAccessToken().then((response) => {
-								        this._createUser(response);
-								    }).done();
-
-								}
-							}
-						}
 						onLogoutFinished={ () =>
 							this.props.navigator.replace({
 								component: require('./LoginPage')
