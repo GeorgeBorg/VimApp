@@ -49,6 +49,8 @@ var Event = t.struct({
   howLongWillItLast: t.Number,    
 });
 
+
+
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
    Main Page
 ------------------------------------------------------------------------------------------------------------------------------------------------------ */
@@ -173,7 +175,7 @@ var MapPage = React.createClass({
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	_createEvent(details) {
 		AsyncStorage.getItem("access_token").then((value) => {
-			fetch("http://4c3eff75.eu.ngrok.io/events", {
+			fetch("http://localhost:3000/events", {
 				method: "POST",
 				headers: {
 					'Accept': 'application/json',
@@ -219,7 +221,7 @@ var MapPage = React.createClass({
 		.map(key => key + '=' + encodeURIComponent(params[key]))
 		.join('&');
 
-		return 'http://4c3eff75.eu.ngrok.io/events?' + querystring;
+		return 'http://localhost:3000/events?' + querystring;
 	},
 
 	_onMapLoad(center) {
@@ -286,9 +288,9 @@ var MapPage = React.createClass({
 
 		return (
 
-    		<View style={styles.container}>
+	    		<View style={styles.container}>
 
- 				<Mapbox
+				<Mapbox
 					style={{flex: 1}}
 					direction={0}
 					rotateEnabled={true}
@@ -315,8 +317,8 @@ var MapPage = React.createClass({
 				
 					<Image 
 						style={styles.settings_button}
-    					source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
-    				/>
+						source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
+					/>
 
 				</TouchableOpacity>
 
@@ -349,10 +351,24 @@ var MapPage = React.createClass({
 
 				<Modal style={[styles.modal]} ref={"settings_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 
+					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+					
+						<TouchableOpacity onPress={this.closeSettings} style={{alignItems: 'center'}}>
+						
+							<Image 
+								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								style={styles.arrow_icon}
+							/>
+						
+						</TouchableOpacity>
+
+					</View>
+
 					<Image
 						style={styles.facebook_icon}
 						source={{uri: this.state.facebook_picture}}
 					/>
+
 					<Text style={styles.profile_name}>
 						{this.state.user_name}
 					</Text>
@@ -366,8 +382,6 @@ var MapPage = React.createClass({
 							})
 						}
 					/>
-
-				 	<Button onPress={this.closeSettings} style={styles.button}>Cancel</Button>
 
 				</Modal>
 
@@ -466,8 +480,8 @@ var styles = StyleSheet.create({
   	},
 
   	arrow_icon: {
-		width: 30,
-		height: 30,
+		width: 20,
+		height: 20,
   	},
 
 	login: {
