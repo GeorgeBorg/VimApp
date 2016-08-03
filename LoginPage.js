@@ -38,6 +38,7 @@ class LoginPage extends Component {
 				<View style={styles.container}>
 
 					<LoginButton
+						style={styles.button}
 						readPermissions={["public_profile", "email", "user_friends"]}
 						onLoginFinished={
 							(error, result) => {
@@ -125,13 +126,20 @@ const styles = StyleSheet.create({
 	},
 
 	button: {
-		height: 10,
-		backgroundColor: '#48BBEC',
-		borderColor: '#48BBEC',
-		borderWidth: 1,
-		borderRadius: 8,
-		marginBottom: 10,
-		justifyContent: 'center'
+		position: 'absolute',
+		backgroundColor: "rgba(255,115,113,0.95)",
+		color: "white",
+		padding: 15,
+		margin: 10,
+		bottom: 12,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.45,
+		letterSpacing: 1,
+		fontSize: 14,
+		fontFamily: 'Helvetica',
+		width: 355,
 	},
 
   	buttonText: {
