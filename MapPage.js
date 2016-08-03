@@ -5,6 +5,7 @@ import NavigationBar from 'react-native-navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 
+
 import {
 	AppRegistry,
 	StyleSheet,
@@ -67,8 +68,6 @@ var MapPage = React.createClass({
 
   	watchID: (null: ?number),
 
-
-
   	componentDidMount: function() {
 
 		navigator.geolocation.getCurrentPosition(
@@ -106,7 +105,6 @@ var MapPage = React.createClass({
 
 	    this.setState({facebook_picture: profile_picture});
 	    this.setState({user_name: user_name});
-
    	 },
 
   	componentWillUnmount: function() {
@@ -120,13 +118,14 @@ var MapPage = React.createClass({
 				latitude: 0,
 				longitude: 0
 			},
-			zoom: 8,
+			zoom: 14,
 			animated: true,
 	      		isOpen: false,
 			swipeToClose: true,
 			sliderValue: 0.3,
 	      		name: 'initial',
     		}
+
   	},
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -154,19 +153,34 @@ var MapPage = React.createClass({
 		this.refs.settings_modal.close();
 	},
 
+	openEvent: function(id) {
+	  	this.setState({event_title: id.title});
+	  	this.setState({event_description: id.description});
+	    this.refs.event_modal.open();
+	  },
 
-	onClose: function() {
-		console.log('Modal just closed');
-	},
+	  closeEvent: function(id) {
+	    this.refs.event_modal.close();
+	  },
 
+ 	  openSettings: function(id) {
+	    this.refs.settings_modal.open();
+	  },
 
-	onOpen: function() {
-		console.log('Modal just opened');
-	},
+	  closeSettings: function(id) {
+	    this.refs.settings_modal.close();
+	  },
 
-	onClosingState: function(state) {
-		console.log('the open/close of the swipeToClose just changed');
-	},
+	  onClose: function() {
+	  },
+
+	  onOpen: function() {
+
+	  },
+
+	  onClosingState: function(state) {
+
+	  },
 
 	saveEvent: function () {
 		// call getValue() to get the values of the form
@@ -177,6 +191,10 @@ var MapPage = React.createClass({
 			this.refs.form_modal.close();
 		}
 	},
+
+  	  joinEvent: function () {
+	    // call getValue() to get the values of the form
+	  },
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Create Event
@@ -272,11 +290,9 @@ var MapPage = React.createClass({
 	_displayEvents(events) {
 		var VimEvents = [];
 		events.forEach(function(event) {
-        		VimEvents.push({
+    		VimEvents.push({
         		"type": "point",
         		"coordinates": [event.latitude, event.longitude],
-	        	"title": event.title,
-	        	"subtitle": event.description,
 	        	'id': event.id.toString(),
 		    })
 		})
@@ -287,6 +303,52 @@ var MapPage = React.createClass({
 		});
 
 	},
+
+	fetchInfo(event) {
+	  	var infoQuery = this._urlForInfoQuery(event);
+	  	this._getEventInfo(infoQuery);
+	  	console.log('worked');
+	},
+
+	_urlForInfoQuery(event) {
+		var id = event.id;
+		return 'http://localhost:3000/events/' + id;
+	},
+
+	_getEventInfo(infoQuery) {
+
+		AsyncStorage.getItem("access_token").then((value) => {
+			fetch(infoQuery,{
+				method: "GET",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Token token=' + value
+				},
+			})
+			.then((response) => {
+				return response.json()
+			})
+			.then((responseData) => {
+				return responseData;
+			})
+			.then((data) => { 
+			 	var data = data
+			 	if (data) {
+			   		this.openEvent(data);
+			 	}
+			   	else {
+			   		alert('nada')
+			   	}
+			})
+			.catch(function(err) {
+				console.log(err);
+		  	})
+			.done();
+		}).done();
+
+	},
+
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Render
@@ -313,11 +375,12 @@ var MapPage = React.createClass({
 					onRegionChange={this.onRegionChange}
 					onRegionWillChange={this.onRegionWillChange}
 					annotations={this.state.annotations}
-					onOpenAnnotation={this.onOpenAnnotation}
-					onRightAnnotationTapped={this.onRightAnnotationTapped}
+					onOpenAnnotation={this.fetchInfo}
+					onRightAnnotationTapped={this.fetchInfo}
 					onUpdateUserLocation={this.onUpdateUserLocation}
 					onLongPress={this.onLongPress}
 					onTap={this.onTap} 
+					attributionButtonIsHidden={false}
 				/>
 
 				<TouchableOpacity onPress={this.openSettings} style={{alignItems: 'center'}}>
@@ -335,6 +398,36 @@ var MapPage = React.createClass({
 				</Animatable.View>
 
 
+				<Modal style={[styles.events_modal]} ref={"event_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+					
+					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+						
+						<TouchableOpacity onPress={this.closeEvent} style={{alignItems: 'center'}}>
+						
+							<Image 
+								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								style={styles.arrow_icon}
+							/>
+						
+						</TouchableOpacity>
+
+					</View>
+
+					<View style={{marginTop:30}}>
+
+						<Text style={styles.profile_name}>
+							{this.state.event_title}
+						</Text>
+
+						<Text style={styles.profile_name}>
+							{this.state.event_description}
+						</Text>
+
+					</View>
+
+					<Button onPress={this.joinEvent} style={styles.button}>JOIN</Button>
+
+				</Modal>
 
 				<Modal style={styles.form_modal} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onFormClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 					
@@ -348,13 +441,16 @@ var MapPage = React.createClass({
 							/>
 						
 						</TouchableOpacity>
+
 					</View>
 
-					<View style={{marginTop:30}}>				  		
+					<View style={{marginTop:30}}>
+
 						<Form
 							ref="form"
 							type={Event}
 						/>
+
 					</View>
 
 					<Button onPress={this.saveEvent} style={styles.button}>CREATE</Button>
@@ -424,6 +520,17 @@ var styles = StyleSheet.create({
 	},
 
 	form_modal: {
+		alignItems: 'center',
+		height:400,
+		width:300,
+		borderRadius: 2,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.3,
+	},
+
+	events_modal: {
 		alignItems: 'center',
 		height:400,
 		width:300,
