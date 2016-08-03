@@ -103,7 +103,6 @@ var MapPage = React.createClass({
 
 	    this.setState({facebook_picture: profile_picture});
 	    this.setState({user_name: user_name});
-
    	 },
 
   	componentWillUnmount: function() {
@@ -281,43 +280,6 @@ var MapPage = React.createClass({
 
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-	   Create User Request
-	------------------------------------------------------------------------------------------------------------------------------------------------------ */
-
-	_createUser(response) {
-		fetch("http://4c3eff75.eu.ngrok.io/users", {
-			method: "POST",
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				facebook_auth_token: response.accessToken,
-				facebook_id: response.userID
-			})
-		})
-		.then((response) => {
-			return response.json()
-		})
-		.then((responseData) => {
-			return responseData;
-		})
-		.then((data) => { 
-			var access_token = JSON.stringify(data.access_token)
-			var facebook_picture = (data.facebook_picture)
-			var user_name = (data.name)
-			AsyncStorage.setItem("access_token", access_token)
-			AsyncStorage.setItem("facebook_picture", facebook_picture)
-			AsyncStorage.setItem("user_name", user_name)
-			alert(user_name)
-		})
-		.catch(function(err) {
-			console.log(err);
-	  	})
-		.done();
-	},
-
-	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Render
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
   	render() {
@@ -398,21 +360,6 @@ var MapPage = React.createClass({
 					<LoginButton
 						style={styles.login}
 						readPermissions={["public_profile", "email", "user_friends"]}
-						onLoginFinished={
-							(error, result) => {
-								if (error) {
-									alert("login has error: " + result.error);
-								} 
-								else if (result.isCancelled) {
-								} 
-								else {
-							    	AccessToken.getCurrentAccessToken().then((response) => {
-								        this._createUser(response);
-								    }).done();
-
-								}
-							}
-						}
 						onLogoutFinished={ () =>
 							this.props.navigator.replace({
 								component: require('./LoginPage')
