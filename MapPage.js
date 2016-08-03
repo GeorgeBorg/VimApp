@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import NavigationBar from 'react-native-navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import * as Animatable from 'react-native-animatable';
 
 
 import {
@@ -44,6 +45,7 @@ var Form = t.form.Form;
 var LoginPage = require('./LoginPage');
 
 
+
 var Event = t.struct({
   title: t.String,              
   description: t.maybe(t.String),
@@ -70,7 +72,6 @@ var MapPage = React.createClass({
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
-			        	var initialPosition = position;
 			        	
 			        	this.setState({
 			        		center: {
@@ -131,15 +132,28 @@ var MapPage = React.createClass({
   	   Modal
   	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
-  	  openForm: function(id) {
-	    this.refs.form_modal.open();
-	  },
+	openForm: function(id) {
+		this.refs.form_modal.open();
+		this.refs.view_button.bounceOutDown(1500);
+	},
 
-	  closeForm: function(id) {
-	    this.refs.form_modal.close();
-	  },
+	closeForm: function(id) {
+		this.refs.form_modal.close();
+	},
 
-	  openEvent: function(id) {
+	onFormClosed: function() {
+		this.refs.view_button.bounceInUp(800);
+	},
+
+	openSettings: function(id) {
+		this.refs.settings_modal.open();
+	},
+
+	closeSettings: function(id) {
+		this.refs.settings_modal.close();
+	},
+
+	openEvent: function(id) {
 	  	this.setState({event_title: id.title});
 	  	this.setState({event_description: id.description});
 	    this.refs.event_modal.open();
@@ -168,16 +182,15 @@ var MapPage = React.createClass({
 
 	  },
 
-	  saveEvent: function () {
-	    // call getValue() to get the values of the form
-	    var value = this.refs.form.getValue();
-	    if (value) { // if validation fails, value will be null
-	   	this._createEvent(value);
-	      	
-	 	this.refs.form_modal.close();
+	saveEvent: function () {
+		// call getValue() to get the values of the form
+		var value = this.refs.form.getValue();
+		if (value) { // if validation fails, value will be null
+			this._createEvent(value);
 
-	    }
-	  },
+			this.refs.form_modal.close();
+		}
+	},
 
   	  joinEvent: function () {
 	    // call getValue() to get the values of the form
@@ -379,9 +392,13 @@ var MapPage = React.createClass({
 
 				</TouchableOpacity>
 
-				<Button onPress={this.openForm} style={styles.create_button}>CREATE A VIM</Button>
 
-				<Modal style={[styles.modal]} ref={"event_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+				<Animatable.View ref="view_button">
+					<Button onPress={this.openForm} style={styles.create_button}>CREATE A VIM</Button>
+				</Animatable.View>
+
+
+				<Modal style={[styles.events_modal]} ref={"event_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 					
 					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
 						
@@ -412,7 +429,7 @@ var MapPage = React.createClass({
 
 				</Modal>
 
-				<Modal style={[styles.modal]} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+				<Modal style={styles.form_modal} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onFormClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 					
 					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
 						
@@ -440,14 +457,14 @@ var MapPage = React.createClass({
 
 				</Modal>
 
-				<Modal style={[styles.modal]} ref={"settings_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 
 					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
 					
 						<TouchableOpacity onPress={this.closeSettings} style={{alignItems: 'center'}}>
 						
 							<Image 
-								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								source={{uri: "http://www.icon2s.com/wp-content/uploads/2014/07/collapse-arrow3-300x300.png"}}
 								style={styles.arrow_icon}
 							/>
 						
@@ -502,7 +519,29 @@ var styles = StyleSheet.create({
 		flex:1,
 	},
 
-	modal: {
+	form_modal: {
+		alignItems: 'center',
+		height:400,
+		width:300,
+		borderRadius: 2,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.3,
+	},
+
+	events_modal: {
+		alignItems: 'center',
+		height:400,
+		width:300,
+		borderRadius: 2,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.3,
+	},
+
+	settings_modal: {
 		alignItems: 'center',
 		height:400,
 		width:300,
@@ -514,7 +553,7 @@ var styles = StyleSheet.create({
 	},
 
 	button: {
-		backgroundColor: '#52D68A',
+		backgroundColor: '#1ECE6D',
 		padding: 10,
 		color: "white",
 		marginTop:20,
@@ -528,6 +567,7 @@ var styles = StyleSheet.create({
 		position: 'absolute',
 		backgroundColor: "rgba(255,115,113,0.95)",
 		color: "white",
+		textAlign: "center",
 		padding: 15,
 		margin: 10,
 		bottom: 12,
@@ -543,11 +583,14 @@ var styles = StyleSheet.create({
 
 	settings_button: {
 		position: 'absolute',
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.45,
 		bottom: 610,
 		left: 10,
 		width:30,
 		height:30,
-		padding:10,
 	},
 
 	facebook_icon: {
