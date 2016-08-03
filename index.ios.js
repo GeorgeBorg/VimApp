@@ -82,11 +82,11 @@ class VimApp extends Component {
 
 		AccessToken.getCurrentAccessToken().then((response) => {
 			if (response != null) {
-		        		this.setState({loggedIn: true})
+        		this.setState({loggedIn: true})
 			}
 			else {
-		        		this.setState({loggedIn: false})
-		        	}
+        		this.setState({loggedIn: false})
+        	}
 	    }).done();
 
     }

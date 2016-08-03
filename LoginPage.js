@@ -35,10 +35,6 @@ class LoginPage extends Component {
 
 			<View style={{flex: 1,}}>
 
-				<NavigationBar
-					title={{ title: 'Login', }}
-				/>
-
 				<View style={styles.container}>
 
 					<LoginButton
@@ -106,7 +102,7 @@ class LoginPage extends Component {
 	}
 
 	_loadMapPage() {
-		this.props.navigator.resetTo({
+		this.props.navigator.replace({
 			component: MapPage
 		});
 	};

@@ -40,6 +40,9 @@ var Button  = require('react-native-button');
 var t = require('tcomb-form-native');
 var Form = t.form.Form;
 
+var LoginPage = require('./LoginPage');
+
+
 var Event = t.struct({
   title: t.String,              
   description: t.maybe(t.String),
@@ -84,7 +87,7 @@ var MapPage = React.createClass({
 
 		this.watchID = navigator.geolocation.watchPosition((position) => {});
 
-	  	 this._loadInitialState().done();
+	  	this._loadInitialState().done();
 
 
 	},
@@ -304,77 +307,84 @@ var MapPage = React.createClass({
 
 	    		<View style={styles.container}>
 
- 				<Mapbox
-					style={{flex: 1}}
-					direction={0}
-					rotateEnabled={true}
-					scrollEnabled={true}
-					zoomEnabled={true}
-					showsUserLocation={true}
-					ref={mapRef}
-					accessToken={"pk.eyJ1IjoiZ2VvcmdlYm9yZyIsImEiOiJjaWk3bnFqYzEwMDlidm5tMnJyMGVvMTFlIn0.t-lvmWyHHj3EjAypomaztw"}
-					styleURL={this.mapStyles.streets}
-					userTrackingMode={this.userTrackingMode.follow}
-					centerCoordinate={this.state.center}
-					zoomLevel={this.state.zoom}
-					onRegionChange={this.onRegionChange}
-					onRegionWillChange={this.onRegionWillChange}
-					annotations={this.state.annotations}
-					onOpenAnnotation={this.onOpenAnnotation}
-					onRightAnnotationTapped={this.onRightAnnotationTapped}
-					onUpdateUserLocation={this.onUpdateUserLocation}
-					onLongPress={this.onLongPress}
-					onTap={this.onTap} 
-				/>
-
-				<Button onPress={this.openSettings}  style={styles.settings_button}>Love Me</Button>
-
-				<Button onPress={this.openForm} style={styles.create_button}>Create Vim</Button>
-
-				<Modal style={[styles.modal]} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
-
-					<Form
-						ref="form"
-						type={Event}
-					/>
-				  	<Button onPress={this.saveEvent} style={styles.button}>Create</Button>
-				 	<Button onPress={this.closeForm} style={styles.button}>Cancel</Button>
-
-				</Modal>
-
-
-				<Modal style={[styles.modal]} ref={"settings_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
-
-					<Image
-						style={styles.facebook_icon}
-						source={{uri: this.state.facebook_picture}}
+	 				<Mapbox
+						style={{flex: 1}}
+						direction={0}
+						rotateEnabled={true}
+						scrollEnabled={true}
+						zoomEnabled={true}
+						showsUserLocation={true}
+						ref={mapRef}
+						accessToken={"pk.eyJ1IjoiZ2VvcmdlYm9yZyIsImEiOiJjaWk3bnFqYzEwMDlidm5tMnJyMGVvMTFlIn0.t-lvmWyHHj3EjAypomaztw"}
+						styleURL={this.mapStyles.streets}
+						userTrackingMode={this.userTrackingMode.follow}
+						centerCoordinate={this.state.center}
+						zoomLevel={this.state.zoom}
+						onRegionChange={this.onRegionChange}
+						onRegionWillChange={this.onRegionWillChange}
+						annotations={this.state.annotations}
+						onOpenAnnotation={this.onOpenAnnotation}
+						onRightAnnotationTapped={this.onRightAnnotationTapped}
+						onUpdateUserLocation={this.onUpdateUserLocation}
+						onLongPress={this.onLongPress}
+						onTap={this.onTap} 
 					/>
 
-					<LoginButton
-						style={styles.login}
-						readPermissions={["public_profile", "email", "user_friends"]}
-						onLoginFinished={
-							(error, result) => {
-								if (error) {
-									alert("login has error: " + result.error);
-								} 
-								else if (result.isCancelled) {
-								} 
-								else {
-							    	AccessToken.getCurrentAccessToken().then((response) => {
-								        this._createUser(response);
-								    }).done();
+					<Button onPress={this.openSettings}  style={styles.settings_button}>Love Me</Button>
 
+					<Button onPress={this.openForm} style={styles.create_button}>Create Vim</Button>
+
+					<Modal style={[styles.modal]} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+
+						<Form
+							ref="form"
+							type={Event}
+						/>
+
+					  	<Button onPress={this.saveEvent} style={styles.button}>Create</Button>
+					 	<Button onPress={this.closeForm} style={styles.button}>Cancel</Button>
+
+					</Modal>
+
+
+					<Modal style={[styles.modal]} ref={"settings_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+
+						<Image
+							style={styles.facebook_icon}
+							source={{uri: this.state.facebook_picture}}
+						/>
+
+
+							<LoginButton
+								style={styles.login}
+								readPermissions={["public_profile", "email", "user_friends"]}
+								onLoginFinished={
+									(error, result) => {
+										if (error) {
+											alert("login has error: " + result.error);
+										} 
+										else if (result.isCancelled) {
+										} 
+										else {
+									    	AccessToken.getCurrentAccessToken().then((response) => {
+										        this._createUser(response);
+										    }).done();
+
+										}
+									}
 								}
-							}
-						}
-					/>
+								onLogoutFinished={ () =>
+									this.props.navigator.replace({
+										component: require('./LoginPage')
+									})
+								}
+							/>
 
-				 	<Button onPress={this.closeSettings} style={styles.button}>Cancel</Button>
+						 	<Button onPress={this.closeSettings} style={styles.button}>Cancel</Button>
 
-				</Modal>
+					</Modal>
 
-			</View>
+				</View>
 
     		);
 
@@ -444,6 +454,11 @@ var styles = StyleSheet.create({
 		right: 0,
 		color: 'white',
 		padding:10,
+	},
+
+	photo_container: {
+		position: 'absolute',
+		top: 200,
 	},
 
 	facebook_icon: {
