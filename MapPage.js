@@ -32,6 +32,8 @@ const {
 } = FBSDK;
 
 const window = Dimensions.get('window');
+var margin = (window.width)*0.025
+var theWidth = (window.width)-margin*2
 
 var Mapbox = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
@@ -91,6 +93,7 @@ var MapPage = React.createClass({
 
 	  	this._loadInitialState().done();
 
+	  	this.refs.join_button.fadeOut(1);
 
 	},
 
@@ -134,7 +137,8 @@ var MapPage = React.createClass({
 
 	openForm: function(id) {
 		this.refs.form_modal.open();
-		this.refs.view_button.bounceOutDown(1500);
+		this.refs.create_button.bounceOutDown(1000)
+
 	},
 
 	closeForm: function(id) {
@@ -142,7 +146,7 @@ var MapPage = React.createClass({
 	},
 
 	onFormClosed: function() {
-		this.refs.view_button.bounceInUp(800);
+		this.refs.create_button.bounceInUp(800)
 	},
 
 	openSettings: function(id) {
@@ -156,11 +160,20 @@ var MapPage = React.createClass({
 	openEvent: function(id) {
 	  	this.setState({event_title: id.title});
 	  	this.setState({event_description: id.description});
-	    this.refs.event_modal.open();
+	 	this.refs.event_modal.open();
+		this.refs.create_button.bounceOutDown(500);
+		this.refs.join_button.bounceInUp(500);
+
 	  },
 
 	  closeEvent: function(id) {
 	    this.refs.event_modal.close();
+	  },
+
+	  onEventClosed: function(){
+		this.refs.create_button.bounceInUp(500);
+		this.refs.join_button.bounceOutDown(500);
+
 	  },
 
  	  openSettings: function(id) {
@@ -307,7 +320,6 @@ var MapPage = React.createClass({
 	fetchInfo(event) {
 	  	var infoQuery = this._urlForInfoQuery(event);
 	  	this._getEventInfo(infoQuery);
-	  	console.log('worked');
 	},
 
 	_urlForInfoQuery(event) {
@@ -392,15 +404,13 @@ var MapPage = React.createClass({
 
 				</TouchableOpacity>
 
+				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+				   Event Modal
+				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Animatable.View ref="view_button">
-					<Button onPress={this.openForm} style={styles.create_button}>CREATE A VIM</Button>
-				</Animatable.View>
+				<Modal style={styles.events_modal} ref={"event_modal"} animationDuration={300} position={"bottom"} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdrop={false } >
 
-
-				<Modal style={[styles.events_modal]} ref={"event_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
-					
-					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+					<View style={{width: theWidth, backgroundColor: "#F7F7F7"}}>	
 						
 						<TouchableOpacity onPress={this.closeEvent} style={{alignItems: 'center'}}>
 						
@@ -425,41 +435,15 @@ var MapPage = React.createClass({
 
 					</View>
 
-					<Button onPress={this.joinEvent} style={styles.button}>JOIN</Button>
-
 				</Modal>
 
-				<Modal style={styles.form_modal} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onFormClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
-					
-					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
-						
-						<TouchableOpacity onPress={this.closeForm} style={{alignItems: 'center'}}>
-						
-							<Image 
-								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
-								style={styles.arrow_icon}
-							/>
-						
-						</TouchableOpacity>
-
-					</View>
-
-					<View style={{marginTop:30}}>
-
-						<Form
-							ref="form"
-							type={Event}
-						/>
-
-					</View>
-
-					<Button onPress={this.saveEvent} style={styles.button}>CREATE</Button>
-
-				</Modal>
+				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+				   Settings Modal
+				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
 				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 
-					<View style={{width:300, backgroundColor: "#F7F7F7"}}>	
+					<View style={{width:theWidth, backgroundColor: "#F7F7F7"}}>	
 					
 						<TouchableOpacity onPress={this.closeSettings} style={{alignItems: 'center'}}>
 						
@@ -493,6 +477,55 @@ var MapPage = React.createClass({
 
 				</Modal>
 
+				
+				<Animatable.View ref="join_button" delay={10000} >
+					<Button style={styles.main_button}>Crash</Button>
+				</Animatable.View>
+
+				<Animatable.View ref="create_button">
+					<Button onPress={this.openForm} style={styles.main_button}>Create</Button>
+				</Animatable.View>
+
+				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+				   Form Modal
+				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
+
+				<Modal style={styles.form_modal} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onFormClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+					
+					<View style={{width: theWidth, backgroundColor: "#F7F7F7"}}>	
+						
+						<TouchableOpacity onPress={this.closeForm} style={{alignItems: 'center'}}>
+						
+							<Image 
+								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
+								style={styles.arrow_icon}
+							/>
+						
+						</TouchableOpacity>
+
+					</View>
+
+					<View style={{marginTop:30}}>
+
+						<Form
+							ref="form"
+							type={Event}
+						/>
+
+					</View>
+
+					<TouchableOpacity onPress={this.saveEvent} style={{alignItems: 'center'}}>
+						
+						<Image 
+							source={{uri: "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678134-sign-check-128.png"}}
+							style={styles.tick_icon}
+						/>
+						
+					</TouchableOpacity>
+
+
+				</Modal>
+
 			</View>
 
 		);
@@ -514,15 +547,10 @@ var styles = StyleSheet.create({
 
 	},
 
-	settings_container: {
-		alignItems: 'center',
-		flex:1,
-	},
-
 	form_modal: {
 		alignItems: 'center',
 		height:400,
-		width:300,
+		width:theWidth,
 		borderRadius: 2,
 		shadowRadius: 2,
 		shadowOffset: {width: 1, height: 1},
@@ -532,8 +560,9 @@ var styles = StyleSheet.create({
 
 	events_modal: {
 		alignItems: 'center',
-		height:400,
-		width:300,
+		height:200,
+		width:theWidth,
+		bottom: 45 + 2*margin,
 		borderRadius: 2,
 		shadowRadius: 2,
 		shadowOffset: {width: 1, height: 1},
@@ -544,7 +573,7 @@ var styles = StyleSheet.create({
 	settings_modal: {
 		alignItems: 'center',
 		height:400,
-		width:300,
+		width: theWidth,
 		borderRadius: 2,
 		shadowRadius: 2,
 		shadowOffset: {width: 1, height: 1},
@@ -563,22 +592,22 @@ var styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 
-	create_button: {
+	main_button: {
 		position: 'absolute',
 		backgroundColor: "rgba(255,115,113,0.95)",
 		color: "white",
 		textAlign: "center",
 		padding: 15,
-		margin: 10,
-		bottom: 12,
+		margin: margin,
+		bottom: margin,
 		shadowRadius: 2,
 		shadowOffset: {width: 1, height: 1},
 		shadowColor: 'black',
 		shadowOpacity: 0.45,
 		letterSpacing: 1,
-		fontSize: 14,
+		fontSize: 15,
 		fontFamily: 'Helvetica',
-		width: 355,
+		width: theWidth,
 	},
 
 	settings_button: {
@@ -611,6 +640,11 @@ var styles = StyleSheet.create({
   	arrow_icon: {
 		width: 20,
 		height: 20,
+  	},
+
+  	tick_icon: {
+  		width: 60,
+  		height: 60,
   	},
 
 	login: {
