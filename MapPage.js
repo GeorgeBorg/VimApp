@@ -137,7 +137,7 @@ var MapPage = React.createClass({
 
 	openForm: function(id) {
 		this.refs.form_modal.open();
-		this.refs.create_button.bounceOutDown(1000)
+		this.refs.create_button.bounceOutDown(1500)
 
 	},
 
@@ -160,6 +160,7 @@ var MapPage = React.createClass({
 	openEvent: function(id) {
 	  	this.setState({event_title: id.title});
 	  	this.setState({event_description: id.description});
+	  	this.setState({event_creator_picture: id.user.facebook_picture});
 	 	this.refs.event_modal.open();
 		this.refs.create_button.bounceOutDown(500);
 		this.refs.join_button.bounceInUp(500);
@@ -173,7 +174,6 @@ var MapPage = React.createClass({
 	  onEventClosed: function(){
 		this.refs.create_button.bounceInUp(500);
 		this.refs.join_button.bounceOutDown(500);
-
 	  },
 
  	  openSettings: function(id) {
@@ -423,6 +423,11 @@ var MapPage = React.createClass({
 
 					</View>
 
+					<Image 
+						source={{uri: this.state.event_creator_picture}}
+						style={styles.event_creator}
+					/>
+
 					<View style={{marginTop:30}}>
 
 						<Text style={styles.profile_name}>
@@ -477,13 +482,24 @@ var MapPage = React.createClass({
 
 				</Modal>
 
+				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+				   Main Buttons
+				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 				
-				<Animatable.View ref="join_button" delay={10000} >
+				<Animatable.View ref="join_button" >
 					<Button style={styles.main_button}>Crash</Button>
 				</Animatable.View>
 
 				<Animatable.View ref="create_button">
-					<Button onPress={this.openForm} style={styles.main_button}>Create</Button>
+						<TouchableOpacity onPress={this.openForm}>
+						
+							<Image 
+								source={{uri: "http://cdn.mysitemyway.com/icons-watermarks/flat-circle-white-on-yellow/bfa/bfa_plus-square/bfa_plus-square_flat-circle-white-on-yellow_512x512.png"}}
+								style={styles.main_icon}
+							/>
+						
+						</TouchableOpacity>
+					
 				</Animatable.View>
 
 				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -592,6 +608,18 @@ var styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 
+	main_icon: {
+		position: 'absolute',
+		bottom: margin,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.45,
+		height: 50,
+		margin: margin,
+		width: 50,
+	},
+
 	main_button: {
 		position: 'absolute',
 		backgroundColor: "rgba(255,115,113,0.95)",
@@ -645,6 +673,12 @@ var styles = StyleSheet.create({
   	tick_icon: {
   		width: 60,
   		height: 60,
+  	},
+
+  	event_creator: {
+  		height: 60,
+  		width: 60,
+  		borderRadius: 30,
   	},
 
 	login: {
