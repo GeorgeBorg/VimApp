@@ -138,7 +138,6 @@ var MapPage = React.createClass({
 	openForm: function(id) {
 		this.refs.form_modal.open();
 		this.refs.create_button.bounceOutDown(1000)
-
 	},
 
 	closeForm: function(id) {
@@ -153,37 +152,35 @@ var MapPage = React.createClass({
 	  	this.setState({event_title: id.title});
 	  	this.setState({event_description: id.description});
 	 	this.refs.event_modal.open();
-		this.refs.create_button.bounceOutDown(500);
+	 	this.refs.create_button.bounceOutDown(500);
 		this.refs.join_button.bounceInUp(500);
 	},
 
 	closeEvent: function(id) {
 		this.refs.event_modal.close();
+	},
+
+	onEventClosed: function(id) {
 		this.refs.create_button.bounceInUp(500);
 		this.refs.join_button.bounceOutDown(500);
 	},
 
-
   	openSettings: function(id) {
-  		this.refs.join_button.bounceOutDown(500);
-		this.refs.event_modal.close();
 		this.refs.settings_modal.open();
 	},
 
 	closeSettings: function(id) {
 		this.refs.settings_modal.close();
+	},	
+
+	onSettingsClosed: function() {
 		this.refs.create_button.bounceInUp(500);
 	},
 
-	onClose: function() {
-	},
-
-	onOpen: function() {
-
-	},
-
-	onClosingState: function(state) {
-
+	onSettingsOpened: function() {
+		this.refs.event_modal.close();
+		this.refs.create_button.bounceOutDown(500);
+		this.refs.join_button.bounceOutDown(500);
 	},
 
 	saveEvent: function () {
@@ -399,7 +396,7 @@ var MapPage = React.createClass({
 				   Event Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Modal style={styles.events_modal} ref={"event_modal"} animationDuration={300} position={"bottom"} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdrop={false } >
+				<Modal style={styles.events_modal} ref={"event_modal"} animationDuration={300} position={"bottom"} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onEventOpened} onClosingState={this.onEventClosingState} backdrop={false} >
 
 					<View style={{width: theWidth, backgroundColor: "#F7F7F7"}}>	
 						
@@ -432,7 +429,7 @@ var MapPage = React.createClass({
 				   Settings Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.closeSettings} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.onSettingsClosed} onOpened={this.onSettingsOpened} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 
 					<View style={{width:theWidth, backgroundColor: "#F7F7F7"}}>	
 					
