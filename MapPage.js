@@ -108,6 +108,9 @@ var MapPage = React.createClass({
 
 	    this.setState({facebook_picture: profile_picture});
 	    this.setState({user_name: user_name});
+	    this.setState({event_modal: false});
+	    this.setState({settings_modal: false});
+	    this.setState({create_modal: false});
    	 },
 
   	componentWillUnmount: function() {
@@ -137,6 +140,7 @@ var MapPage = React.createClass({
 
 	openForm: function(id) {
 		this.refs.form_modal.open();
+		this.setState({create_modal: true});
 		this.refs.create_button.bounceOutDown(1000)
 	},
 
@@ -146,14 +150,22 @@ var MapPage = React.createClass({
 
 	onFormClosed: function() {
 		this.refs.create_button.bounceInUp(800)
+		this.setState({create_modal: false});
 	},
 
 	openEvent: function(id) {
 	  	this.setState({event_title: id.title});
 	  	this.setState({event_description: id.description});
+
+	  	if (this.state.event_modal == false) {
+	  		this.refs.create_button.bounceOutDown(500);
+			this.refs.join_button.bounceInUp(500);
+		}
+
+	  	this.setState({event_modal: true});
+
 	 	this.refs.event_modal.open();
-	 	this.refs.create_button.bounceOutDown(500);
-		this.refs.join_button.bounceInUp(500);
+
 	},
 
 	closeEvent: function(id) {
@@ -161,12 +173,25 @@ var MapPage = React.createClass({
 	},
 
 	onEventClosed: function(id) {
-		this.refs.create_button.bounceInUp(500);
-		this.refs.join_button.bounceOutDown(500);
+		this.setState({event_modal: false});
+
+		if (this.state.settings_modal == false) {
+			this.refs.create_button.bounceInUp(500);
+			this.refs.join_button.bounceOutDown(500);
+		}
 	},
 
   	openSettings: function(id) {
 		this.refs.settings_modal.open();
+		this.setState({settings_modal: true});
+
+		if (this.state.event_modal == true) {
+			this.refs.event_modal.close();
+			this.refs.join_button.bounceOutDown(500);
+		}
+		else {
+			this.refs.create_button.bounceOutDown(500);
+		}
 	},
 
 	closeSettings: function(id) {
@@ -175,12 +200,7 @@ var MapPage = React.createClass({
 
 	onSettingsClosed: function() {
 		this.refs.create_button.bounceInUp(500);
-	},
-
-	onSettingsOpened: function() {
-		this.refs.event_modal.close();
-		this.refs.create_button.bounceOutDown(500);
-		this.refs.join_button.bounceOutDown(500);
+		this.setState({settings_modal: false});
 	},
 
 	saveEvent: function () {
