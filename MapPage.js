@@ -111,6 +111,9 @@ var MapPage = React.createClass({
 	    this.setState({facebook_picture: profile_picture});
 	    this.setState({user_name: user_name});
 	    this.setState({user_id: user_id});
+	    this.setState({event_modal: false});
+	    this.setState({settings_modal: false});
+	    this.setState({create_modal: false});
    	 },
 
   	componentWillUnmount: function() {
@@ -140,8 +143,8 @@ var MapPage = React.createClass({
 
 	openForm: function(id) {
 		this.refs.form_modal.open();
-		this.refs.create_button.bounceOutDown(1500)
-
+		this.setState({create_modal: true});
+		this.refs.create_button.bounceOutDown(1000)
 	},
 
 	closeForm: function(id) {
@@ -150,14 +153,7 @@ var MapPage = React.createClass({
 
 	onFormClosed: function() {
 		this.refs.create_button.bounceInUp(800)
-	},
-
-	openSettings: function(id) {
-		this.refs.settings_modal.open();
-	},
-
-	closeSettings: function(id) {
-		this.refs.settings_modal.close();
+		this.setState({create_modal: false});
 	},
 
 	openEvent: function(id) {
@@ -176,11 +172,17 @@ var MapPage = React.createClass({
 
 		}
 
-	 	this.refs.event_modal.open();
-		this.refs.create_button.bounceOutDown(500);
-		this.refs.join_button.bounceInUp(500);
+	  	if (this.state.event_modal == false) {
+	  		this.refs.create_button.bounceOutDown(500);
+			this.refs.join_button.bounceInUp(500);
+		}	  	
 
-	  },
+		this.setState({event_modal: true});
+
+	 	this.refs.event_modal.open();
+
+	},
+
 
 	_initialise_event(event) {
 	  	this.setState({event_title: event.title});
@@ -202,33 +204,40 @@ var MapPage = React.createClass({
 	  	
 	},	
 
-	  closeEvent: function(id) {
-	    this.refs.event_modal.close();
-	  },
+	closeEvent: function(id) {
+		this.refs.event_modal.close();
+	},
 
-	  onEventClosed: function(){
+	onEventClosed: function(id) {
+		this.setState({event_modal: false});
+
+		if (this.state.settings_modal == false) {
+			this.refs.create_button.bounceInUp(500);
+			this.refs.join_button.bounceOutDown(500);
+		}
+	},
+
+  	openSettings: function(id) {
+		this.refs.settings_modal.open();
+		this.setState({settings_modal: true});
+
+		if (this.state.event_modal == true) {
+			this.refs.event_modal.close();
+			this.refs.join_button.bounceOutDown(500);
+		}
+		else {
+			this.refs.create_button.bounceOutDown(500);
+		}
+	},
+
+	closeSettings: function(id) {
+		this.refs.settings_modal.close();
+	},	
+
+	onSettingsClosed: function() {
 		this.refs.create_button.bounceInUp(500);
-		// this.refs.join_button.bounceOutDown(500);
-	  },
-
- 	  openSettings: function(id) {
-	    this.refs.settings_modal.open();
-	  },
-
-	  closeSettings: function(id) {
-	    this.refs.settings_modal.close();
-	  },
-
-	  onClose: function() {
-	  },
-
-	  onOpen: function() {
-
-	  },
-
-	  onClosingState: function(state) {
-
-	  },
+		this.setState({settings_modal: false});
+	},
 
 	saveEvent: function () {
 		// call getValue() to get the values of the form
@@ -558,7 +567,7 @@ var MapPage = React.createClass({
 				   Event Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Modal style={styles.events_modal} ref={"event_modal"} animationDuration={300} position={"bottom"} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdrop={false } >
+				<Modal style={styles.events_modal} ref={"event_modal"} animationDuration={300} position={"bottom"} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onEventOpened} onClosingState={this.onEventClosingState} backdrop={false} >
 
 					<View style={{width: theWidth, backgroundColor: "#F7F7F7"}}>	
 						
@@ -601,7 +610,7 @@ var MapPage = React.createClass({
 				   Settings Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.onClose} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
+				<Modal style={styles.settings_modal} ref={"settings_modal"} entry={"top"} swipeToClose={this.state.swipeToClose} onClosed={this.onSettingsClosed} onOpened={this.onSettingsOpened} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
 
 					<View style={{width:theWidth, backgroundColor: "#F7F7F7"}}>	
 					
