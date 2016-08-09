@@ -89,9 +89,12 @@ class LoginPage extends Component {
 			var access_token = JSON.stringify(data.access_token)
 			var facebook_picture = (data.facebook_picture)
 			var user_name = (data.name)
+			var user_id = JSON.stringify(data.id)
 			AsyncStorage.setItem("access_token", access_token)
 			AsyncStorage.setItem("facebook_picture", facebook_picture)
 			AsyncStorage.setItem("user_name", user_name)
+			AsyncStorage.setItem("user_id", user_id)
+
 		})
 		.catch(function(err) {
 			console.log(err);

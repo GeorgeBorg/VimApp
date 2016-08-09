@@ -45,7 +45,7 @@ var t = require('tcomb-form-native');
 var Form = t.form.Form;
 
 var LoginPage = require('./LoginPage');
-
+var  loginButton;
 
 
 var Event = t.struct({
@@ -53,7 +53,6 @@ var Event = t.struct({
   description: t.maybe(t.String),
   howLongWillItLast: t.Number,    
 });
-
 
 
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -93,7 +92,8 @@ var MapPage = React.createClass({
 
 	  	this._loadInitialState().done();
 
-	  	this.refs.join_button.fadeOut(1);
+	  	// this.refs.join_button.fadeOut(1);
+
 
 	},
 
@@ -101,6 +101,8 @@ var MapPage = React.createClass({
 		try {
 			var profile_picture = await AsyncStorage.getItem("facebook_picture").then((value) => {return value});
 			var user_name = await AsyncStorage.getItem("user_name").then((value) => {return value});
+			var user_id = await AsyncStorage.getItem("user_id").then((value) => {return value});
+
 
 		} catch (error) {
 	      	this._appendMessage('AsyncStorage error: ' + error.message);
@@ -108,6 +110,7 @@ var MapPage = React.createClass({
 
 	    this.setState({facebook_picture: profile_picture});
 	    this.setState({user_name: user_name});
+	    this.setState({user_id: user_id});
    	 },
 
   	componentWillUnmount: function() {
@@ -158,14 +161,46 @@ var MapPage = React.createClass({
 	},
 
 	openEvent: function(id) {
-	  	this.setState({event_title: id.title});
-	  	this.setState({event_description: id.description});
-	  	this.setState({event_creator_picture: id.user.facebook_picture});
+		this._initialise_event(id);
+
+  		if (this.state.event_creator_id == this.state.user_id) {
+			loginButton =  <Animatable.View ref="join_button" ><Button onPress={this.deleteEvent} style={styles.main_button}>Delete</Button></Animatable.View>;
+			this.setState({onion: false});
+		} else if (this.state.event_users === true) {
+			loginButton =  <Animatable.View ref="join_button" ><Button onPress={this.leaveEvent} style={styles.main_button}>Leave</Button></Animatable.View>;
+			this.setState({onion: false});
+
+		} else {
+		  	loginButton =  <Animatable.View ref="join_button" ><Button onPress={this.joinEvent} style={styles.main_button}>Crash</Button></Animatable.View>;
+			this.setState({onion: false});
+
+		}
+
 	 	this.refs.event_modal.open();
 		this.refs.create_button.bounceOutDown(500);
 		this.refs.join_button.bounceInUp(500);
 
 	  },
+
+	_initialise_event(event) {
+	  	this.setState({event_title: event.title});
+	  	this.setState({event_description: event.description});
+	  	this.setState({event_users_length: event.users.length});
+		this.setState({event_id: event.id});
+	  	this.setState({event_creator_id: event.creator.id});
+	  	this.setState({event_creator_picture: event.creator.facebook_picture});
+
+		var x;
+
+		for (x in event.users) {
+			var id1 = String(event.users[x].id);
+			var id2 = String(this.state.user_id);
+			if (id1 === id2){
+	  			return this.setState({event_users: true});
+	  		}
+	  	}
+	  	
+	},	
 
 	  closeEvent: function(id) {
 	    this.refs.event_modal.close();
@@ -173,7 +208,7 @@ var MapPage = React.createClass({
 
 	  onEventClosed: function(){
 		this.refs.create_button.bounceInUp(500);
-		this.refs.join_button.bounceOutDown(500);
+		// this.refs.join_button.bounceOutDown(500);
 	  },
 
  	  openSettings: function(id) {
@@ -204,10 +239,6 @@ var MapPage = React.createClass({
 			this.refs.form_modal.close();
 		}
 	},
-
-  	  joinEvent: function () {
-	    // call getValue() to get the values of the form
-	  },
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Create Event
@@ -246,6 +277,7 @@ var MapPage = React.createClass({
 
 	},
 
+
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   GET Events & Display
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
@@ -267,6 +299,10 @@ var MapPage = React.createClass({
 	  	var query = this._urlForQuery(center);
 	  	this._getEvents(query);
 	},
+
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Index Events
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 	_getEvents(query) {
 		AsyncStorage.getItem("access_token").then((value) => {
@@ -317,6 +353,9 @@ var MapPage = React.createClass({
 
 	},
 
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Show Event
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	fetchInfo(event) {
 	  	var infoQuery = this._urlForInfoQuery(event);
 	  	this._getEventInfo(infoQuery);
@@ -361,6 +400,117 @@ var MapPage = React.createClass({
 
 	},
 
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Join Event
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
+	joinEvent() {
+		AsyncStorage.getItem("access_token").then((value) => {
+			fetch("http://localhost:3000/guests", {
+				method: "POST",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Token token=' + value
+				},
+				body: JSON.stringify({
+					event_id: this.state.event_id,
+					user_id: this.state.user_id,
+				})
+			})
+			.then((response) => {
+				var event_id = this.state.event_id;
+				var query = 'http://localhost:3000/events/' + event_id;
+	  			this._getEventInfo(query);
+				return response.json()
+			})
+			.then((responseData) => {
+				return responseData;
+			})
+			.then((data) => { 
+				this.setState({guest_id: data.id})
+			})
+			.catch(function(err) {
+		  	})
+			.done();
+		}).done();
+		
+	},
+
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Leave event
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
+	leaveEvent() {
+		AsyncStorage.getItem("access_token").then((value) => {
+			fetch("http://localhost:3000/guests", {
+				method: "DELETE",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Token token=' + value
+				},
+				body: JSON.stringify({
+					event_id: this.state.event_id,
+					user_id: this.state.user_id,
+				})
+			})
+			.then((response) => {
+				this.setState({event_users: false});
+				var event_id = this.state.event_id;
+				var query = 'http://localhost:3000/events/' + event_id;
+	  			this._getEventInfo(query);
+				return response.json()
+			})
+			.then((responseData) => {
+				return responseData;
+			})
+			.then((data) => { 
+				
+			})
+			.catch(function(err) {
+		  	})
+			.done();
+		}).done();
+	},
+
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Delete event
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
+
+	deleteEvent() {
+		var id = this.state.event_id;
+		var query =  'http://localhost:3000/events/' + id;
+
+		AsyncStorage.getItem("access_token").then((value) => {
+			fetch(query,{
+				method: "DELETE",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Token token=' + value
+				},
+
+			})
+			.then((response) => {
+				return response.json()
+			})
+			.then((responseData) => {
+				return responseData;
+			})
+			.then((data) => { 
+			})
+			.catch(function(err) {
+				console.log(err);
+		  	})
+			.done(()=> {
+				var newQuery = this._urlForQuery(this.state.center);
+				this._getEvents(newQuery);
+			});
+
+		}).done();
+
+		this.refs.event_modal.close();
+
+	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Render
@@ -428,7 +578,7 @@ var MapPage = React.createClass({
 						style={styles.event_creator}
 					/>
 
-					<View style={{marginTop:30}}>
+					<View style={{marginTop:10}}>
 
 						<Text style={styles.profile_name}>
 							{this.state.event_title}
@@ -437,6 +587,11 @@ var MapPage = React.createClass({
 						<Text style={styles.profile_name}>
 							{this.state.event_description}
 						</Text>
+
+						<Text style={styles.profile_name}>
+							{this.state.event_users_length} other(s) going!
+						</Text>
+
 
 					</View>
 
@@ -486,20 +641,11 @@ var MapPage = React.createClass({
 				   Main Buttons
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 				
-				<Animatable.View ref="join_button" >
-					<Button style={styles.main_button}>Crash</Button>
-				</Animatable.View>
+				{loginButton}
+
 
 				<Animatable.View ref="create_button">
-						<TouchableOpacity onPress={this.openForm}>
-						
-							<Image 
-								source={{uri: "http://cdn.mysitemyway.com/icons-watermarks/flat-circle-white-on-yellow/bfa/bfa_plus-square/bfa_plus-square_flat-circle-white-on-yellow_512x512.png"}}
-								style={styles.main_icon}
-							/>
-						
-						</TouchableOpacity>
-					
+					<Button onPress={this.openForm} style={styles.main_button}>What are you up to?</Button>
 				</Animatable.View>
 
 				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -606,18 +752,6 @@ var styles = StyleSheet.create({
 		letterSpacing: 1,
 		fontSize: 14,
 		justifyContent: 'center'
-	},
-
-	main_icon: {
-		position: 'absolute',
-		bottom: margin,
-		shadowRadius: 2,
-		shadowOffset: {width: 1, height: 1},
-		shadowColor: 'black',
-		shadowOpacity: 0.45,
-		height: 50,
-		margin: margin,
-		width: 50,
 	},
 
 	main_button: {
