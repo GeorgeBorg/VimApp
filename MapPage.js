@@ -157,29 +157,29 @@ var MapPage = React.createClass({
 	},
 
 	openEvent: function(id) {
+
 		this._initialise_event(id);
 
-  		if (this.state.event_creator_id == this.state.user_id) {
-			loginButton =  <Animatable.View ref="join_button" ><Button onPress={this.deleteEvent} style={styles.main_button}>Delete</Button></Animatable.View>;
-			this.setState({onion: false});
-		} else if (this.state.event_users === true) {
-			loginButton =  <Animatable.View ref="join_button" ><Button onPress={this.leaveEvent} style={styles.main_button}>Leave</Button></Animatable.View>;
-			this.setState({onion: false});
+	 	this.refs.event_modal.open();
 
+		// Is the user the creator, a guest or not
+  		if (this.state.event_creator_id == this.state.user_id) { 
+			loginButton = <Button onPress={this.deleteEvent} style={styles.main_button}>Delete</Button>;
+			this.setState({onion: false});
+		} else if (this.state.event_users == true) {
+			loginButton = <Button onPress={this.leaveEvent} style={styles.main_button}>Leave</Button>;
+			this.setState({onion: false});
 		} else {
-		  	loginButton =  <Animatable.View ref="join_button" ><Button onPress={this.joinEvent} style={styles.main_button}>Crash</Button></Animatable.View>;
+		  	loginButton = <Button onPress={this.joinEvent} style={styles.main_button}>Crash</Button>;
 			this.setState({onion: false});
-
 		}
 
 	  	if (this.state.event_modal == false) {
 	  		this.refs.create_button.bounceOutDown(500);
 			this.refs.join_button.bounceInUp(500);
-		}	  	
+		}
 
 		this.setState({event_modal: true});
-
-	 	this.refs.event_modal.open();
 
 	},
 
@@ -192,6 +192,7 @@ var MapPage = React.createClass({
 	  	this.setState({event_creator_id: event.creator.id});
 	  	this.setState({event_creator_picture: event.creator.facebook_picture});
 
+	  	// See if current user is a guest of the event, if so, will show the crash/leave buttons
 		var x;
 
 		for (x in event.users) {
@@ -244,7 +245,6 @@ var MapPage = React.createClass({
 		var value = this.refs.form.getValue();
 		if (value) { // if validation fails, value will be null
 			this._createEvent(value);
-
 			this.refs.form_modal.close();
 		}
 	},
@@ -649,8 +649,9 @@ var MapPage = React.createClass({
 				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 				   Main Buttons
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
-				
-				{loginButton}
+				<Animatable.View ref="join_button">
+					{loginButton}
+				</Animatable.View>
 
 
 				<Animatable.View ref="create_button">
