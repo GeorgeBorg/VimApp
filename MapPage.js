@@ -181,7 +181,7 @@ var MapPage = React.createClass({
 		  	loginButton = <Button onPress={this.joinEvent} style={styles.main_button}>Crash</Button>;
 			this.setState({update_button: true});
 		}
-		alert(this.state.event_modal);
+
 	  	if (this.state.event_modal == false) {
 	  		this.refs.create_button.bounceOutDown(500);
 			this.refs.join_button.bounceInUp(500);
@@ -200,7 +200,7 @@ var MapPage = React.createClass({
 	  	this.setState({event_creator_id: event.creator.id});
 	  	this.setState({event_creator_picture: event.creator.facebook_picture});
 
-	  	// See if current user is a guest of the event, if so, will show the crash/leave buttons
+	  	// See if current user is a guest of the event, if so, will show the leave button^^^
 		var x;
 
 		for (x in event.users) {
