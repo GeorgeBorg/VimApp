@@ -29,6 +29,8 @@ const {
 	GraphRequestManager,
 	LoginManager,
 	AccessToken,
+	AppInviteDialog,
+	ShareDialog,
 } = FBSDK;
 
 const window = Dimensions.get('window');
@@ -105,16 +107,22 @@ var MapPage = React.createClass({
 
 
 		} catch (error) {
-	      	this._appendMessage('AsyncStorage error: ' + error.message);
-	    };
+			this._appendMessage('AsyncStorage error: ' + error.message);
+		};
 
-	    this.setState({facebook_picture: profile_picture});
-	    this.setState({user_name: user_name});
-	    this.setState({user_id: user_id});
-	    this.setState({event_modal: false});
-	    this.setState({settings_modal: false});
-	    this.setState({create_modal: false});
-   	 },
+		this.setState({facebook_picture: profile_picture});
+		this.setState({user_name: user_name});
+		this.setState({user_id: user_id});
+		this.setState({event_modal: false});
+		this.setState({settings_modal: false});
+		this.setState({create_modal: false});
+
+		const inviteLinkContent = {
+			applinkUrl: "https://fb.me/1756096064669863",
+		};
+
+		this.setState({inviteLinkContent: inviteLinkContent});
+	},
 
   	componentWillUnmount: function() {
   		navigator.geolocation.clearWatch(this.watchID);
@@ -165,15 +173,15 @@ var MapPage = React.createClass({
 		// Is the user the creator, a guest or not
   		if (this.state.event_creator_id == this.state.user_id) { 
 			loginButton = <Button onPress={this.deleteEvent} style={styles.main_button}>Delete</Button>;
-			this.setState({onion: false});
+			this.setState({update_button: true});
 		} else if (this.state.event_users == true) {
 			loginButton = <Button onPress={this.leaveEvent} style={styles.main_button}>Leave</Button>;
-			this.setState({onion: false});
+			this.setState({update_button: true});
 		} else {
 		  	loginButton = <Button onPress={this.joinEvent} style={styles.main_button}>Crash</Button>;
-			this.setState({onion: false});
+			this.setState({update_button: true});
 		}
-
+		alert(this.state.event_modal);
 	  	if (this.state.event_modal == false) {
 	  		this.refs.create_button.bounceOutDown(500);
 			this.refs.join_button.bounceInUp(500);
@@ -518,7 +526,31 @@ var MapPage = React.createClass({
 		}).done();
 
 		this.refs.event_modal.close();
+	},
 
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
+	   Invite to Event
+	------------------------------------------------------------------------------------------------------------------------------------------------------ */
+	inviteToEvent() {
+		var tmp = this;
+		AppInviteDialog.canShow(this.state.inviteLinkContent).then(
+			function(canShow) {
+				if (canShow) {
+					return AppInviteDialog.show(tmp.state.inviteLinkContent);
+				}
+			}
+		).then(
+			function(result) {
+				if (result.isCancelled) {
+					alert('invite cancelled');
+				} else {
+					alert('invite success with postId: '+ result.postId);
+				}
+			},
+			function(error) {
+				alert('invite fail with error: ' + error);
+			}
+		);
 	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -579,6 +611,7 @@ var MapPage = React.createClass({
 							/>
 						
 						</TouchableOpacity>
+
 
 					</View>
 
@@ -659,7 +692,7 @@ var MapPage = React.createClass({
 				</Animatable.View>
 
 				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-				   Form Modal
+				   Create Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
 				<Modal style={styles.form_modal} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onFormClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
@@ -672,6 +705,13 @@ var MapPage = React.createClass({
 								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
 								style={styles.arrow_icon}
 							/>
+						
+						</TouchableOpacity>
+
+
+						<TouchableOpacity onPress={this.inviteToEvent} style={{alignItems: 'center'}}>
+						
+							<Text>Invite </Text>
 						
 						</TouchableOpacity>
 
@@ -805,7 +845,6 @@ var styles = StyleSheet.create({
   		color: "black",
   		fontSize:18,
   		fontWeight: "600",
-  		color: "#333",
   		marginTop:10,
   	},
 
