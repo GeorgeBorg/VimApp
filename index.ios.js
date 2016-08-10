@@ -7,6 +7,7 @@ import NavigationBar from 'react-native-navbar';
 var LoginPage = require('./LoginPage');
 var MapPage = require('./MapPage');
 var LoadingPage = require('./LoadingPage');
+
 	
 import {
 	AppRegistry,

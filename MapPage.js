@@ -29,6 +29,8 @@ const {
 	GraphRequestManager,
 	LoginManager,
 	AccessToken,
+	AppInviteDialog,
+	ShareDialog,
 } = FBSDK;
 
 const window = Dimensions.get('window');
@@ -111,6 +113,14 @@ var MapPage = React.createClass({
 	    this.setState({event_modal: false});
 	    this.setState({settings_modal: false});
 	    this.setState({create_modal: false});
+
+    	const inviteLinkContent = {
+	      	applinkUrl: "https://fb.me/1756096064669863",
+	    };
+
+	    this.state = {
+	      	inviteLinkContent: inviteLinkContent,
+	    };
    	 },
 
   	componentWillUnmount: function() {
@@ -222,7 +232,7 @@ var MapPage = React.createClass({
 	------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	_createEvent(details) {
 		AsyncStorage.getItem("access_token").then((value) => {
-			fetch("http://localhost:3000/events", {
+			fetch("http://8aff92ac.eu.ngrok.io/events", {
 				method: "POST",
 				headers: {
 					'Accept': 'application/json',
@@ -268,7 +278,7 @@ var MapPage = React.createClass({
 		.map(key => key + '=' + encodeURIComponent(params[key]))
 		.join('&');
 
-		return 'http://localhost:3000/events?' + querystring;
+		return 'http://8aff92ac.eu.ngrok.io/events?' + querystring;
 	},
 
 	_onMapLoad(center) {
@@ -332,7 +342,7 @@ var MapPage = React.createClass({
 
 	_urlForInfoQuery(event) {
 		var id = event.id;
-		return 'http://localhost:3000/events/' + id;
+		return 'http://8aff92ac.eu.ngrok.io/events/' + id;
 	},
 
 	_getEventInfo(infoQuery) {
@@ -369,6 +379,28 @@ var MapPage = React.createClass({
 
 	},
 
+	inviteToEvent() {
+	    var tmp = this;
+	    AppInviteDialog.canShow(this.state.inviteLinkContent).then(
+	      function(canShow) {
+	        if (canShow) {
+	          return AppInviteDialog.show(tmp.state.inviteLinkContent);
+	        }
+	      }
+	    ).then(
+	      function(result) {
+	        if (result.isCancelled) {
+	          alert('invite cancelled');
+	        } else {
+	          alert('invite success with postId: '
+	            + result.postId);
+	        }
+	      },
+	      function(error) {
+	        alert('invite fail with error: ' + error);
+	      }
+	    );
+	},
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
 	   Render
@@ -428,6 +460,7 @@ var MapPage = React.createClass({
 							/>
 						
 						</TouchableOpacity>
+
 
 					</View>
 
@@ -495,7 +528,7 @@ var MapPage = React.createClass({
 				</Animatable.View>
 
 				{/* ------------------------------------------------------------------------------------------------------------------------------------------------------
-				   Form Modal
+				   Create Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
 				<Modal style={styles.form_modal} ref={"form_modal"} swipeToClose={this.state.swipeToClose} onClosed={this.onFormClosed} onOpened={this.onOpen} onClosingState={this.onClosingState} backdropOpacity={0.5}  backdropColor={"white"} >
@@ -508,6 +541,13 @@ var MapPage = React.createClass({
 								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
 								style={styles.arrow_icon}
 							/>
+						
+						</TouchableOpacity>
+
+
+						<TouchableOpacity onPress={this.inviteToEvent} style={{alignItems: 'center'}}>
+						
+							<Text>Invite </Text>
 						
 						</TouchableOpacity>
 
@@ -624,7 +664,7 @@ var styles = StyleSheet.create({
 		shadowOffset: {width: 1, height: 1},
 		shadowColor: 'black',
 		shadowOpacity: 0.45,
-		bottom: 610,
+		bottom: 300,
 		left: 10,
 		width:30,
 		height:30,
@@ -641,7 +681,6 @@ var styles = StyleSheet.create({
   		color: "black",
   		fontSize:18,
   		fontWeight: "600",
-  		color: "#333",
   		marginTop:10,
   	},
 

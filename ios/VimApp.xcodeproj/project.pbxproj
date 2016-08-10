@@ -327,7 +327,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 4MH4G7UVNJ;
+						DevelopmentTeam = 77FDP29TA7;
 					};
 				};
 			};
@@ -620,7 +620,7 @@
 				INFOPLIST_FILE = VimApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = VimApp;
+				PRODUCT_BUNDLE_IDENTIFIER = VimAppTest;
 				PRODUCT_NAME = VimApp;
 				PROVISIONING_PROFILE = "";
 			};
@@ -649,7 +649,7 @@
 				INFOPLIST_FILE = VimApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = VimApp;
+				PRODUCT_BUNDLE_IDENTIFIER = VimAppTest;
 				PRODUCT_NAME = VimApp;
 				PROVISIONING_PROFILE = "";
 			};
