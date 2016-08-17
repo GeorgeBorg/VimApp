@@ -1,51 +1,100 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
+'use strict';
 
 import React, { Component } from 'react';
+
+import NavigationBar from 'react-native-navbar';
+
+var LoginPage = require('./LoginPage');
+var MapPage = require('./MapPage');
+var LoadingPage = require('./LoadingPage');
+
+  
 import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableHighlight,
+  AlertIOS,
+  Navigator,
 } from 'react-native';
 
-class VimApp extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
-  }
+function renderScene(route, navigator) {
+    return <route.component route={route} navigator={navigator} />;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+const FBSDK = require('react-native-fbsdk');
+
+const {
+  AccessToken,
+} = FBSDK;
+
+class VimApp extends Component {
+
+  constructor(props) {
+
+    super(props);
+
+    this.state = {
+      loggedIn: 'loading'
+    };
+
+  }
+
+  render() {
+
+    if (this.state.loggedIn == 'loading') {
+
+        return ( 
+      <Navigator
+                initialRoute={{ component: LoadingPage}}
+                renderScene={renderScene}
+                key="first"
+      />
+        )
+
+      }
+      else if (this.state.loggedIn == false) {
+
+        return (
+      <Navigator
+                initialRoute={{ component: LoginPage}}
+                renderScene={renderScene}
+                key="second"
+      />
+        )
+
+      } 
+      else {
+
+        return (
+      <Navigator
+                initialRoute={{ component: MapPage}}
+                renderScene={renderScene}
+                key="third"
+      />
+        )
+
+      }
+    
+  }
+
+  componentWillMount() {
+
+    AccessToken.getCurrentAccessToken().then((response) => {
+      if (response != null) {
+            this.setState({loggedIn: true})
+      }
+      else {
+            this.setState({loggedIn: false})
+          }
+      }).done();
+
+    }
+
+}
+
 
 AppRegistry.registerComponent('VimApp', () => VimApp);
+
+module.exports = VimApp;
