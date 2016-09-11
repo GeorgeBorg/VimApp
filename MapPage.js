@@ -359,9 +359,14 @@ var MapPage = React.createClass({
     		VimEvents.push({
         		"type": "point",
         		"coordinates": [event.latitude, event.longitude],
-	        	'id': event.id.toString(),
+	        	'id': event.id.toString(),				 	
+		  		annotationImage: {
+	          		url: event.creator.facebook_picture,
+	          		height: 50,
+	          		width: 50,
+		        }
 		    })
-		})
+		});
 
 		this.setState({
 			annotations:
