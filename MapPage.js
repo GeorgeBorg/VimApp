@@ -60,8 +60,17 @@ var Event = t.struct({
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
    Main Page
 ------------------------------------------------------------------------------------------------------------------------------------------------------ */
+var icon = React.createClass({
+	render() {
+		<Image 
+			style={styles.icon}
+			source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
+		/>
+	}
+})
 
 var MapPage = React.createClass({
+
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
   	   Initializers
@@ -95,7 +104,6 @@ var MapPage = React.createClass({
 	  	this._loadInitialState().done();
 
 	  	// this.refs.join_button.fadeOut(1);
-
 
 	},
 
@@ -353,6 +361,8 @@ var MapPage = React.createClass({
 		}).done();
 	},
 
+
+
 	_displayEvents(events) {
 		var VimEvents = [];
 		events.forEach(function(event) {
@@ -361,9 +371,9 @@ var MapPage = React.createClass({
         		"coordinates": [event.latitude, event.longitude],
 	        	'id': event.id.toString(),				 	
 		  		annotationImage: {
-	          		url: event.creator.facebook_picture,
-	          		height: 50,
-	          		width: 50,
+	          		uri: icon,
+	          		height: 20,
+	          		width: 20,
 		        }
 		    })
 		});
@@ -757,6 +767,10 @@ var MapPage = React.createClass({
 ------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 var styles = StyleSheet.create({
+
+	icon: {
+		borderRadius: 25
+	},
 
 	container: {
 		flex: 1,
