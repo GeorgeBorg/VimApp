@@ -7,6 +7,7 @@ import {
 	StyleSheet,
 	Text,
 	View,
+	Image,
 	AsyncStorage,
 	TouchableHighlight,
 	AlertIOS,
@@ -36,6 +37,8 @@ class LoginPage extends Component {
 			<View style={{flex: 1,}}>
 
 				<View style={styles.container}>
+
+					<Image style= {styles.loginlogo} source={require('./crowd-login.png')} />
 
 					<LoginButton
 						style={styles.button}
@@ -122,23 +125,24 @@ const styles = StyleSheet.create({
 
 	container: {
 		flex: 1,
-		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
-		height: 100,
+		backgroundColor: '#074E64',
+	},
+
+	loginlogo: {
+		marginTop:130,
 	},
 
 	button: {
 		position: 'absolute',
-		backgroundColor: "rgba(255,115,113,0.95)",
-		padding: 15,
-		margin: 10,
-		bottom: 12,
+		padding: 25,
+		margin: 40,
+		bottom: 160,
 		shadowRadius: 2,
 		shadowOffset: {width: 1, height: 1},
 		shadowColor: 'black',
 		shadowOpacity: 0.45,
-		width: 355,
+		width: 300,
 	},
 
   	buttonText: {

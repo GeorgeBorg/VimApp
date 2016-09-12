@@ -34,7 +34,7 @@ const {
 } = FBSDK;
 
 const window = Dimensions.get('window');
-var margin = (window.width)*0.025
+var margin = (window.width)*0.1
 var theWidth = (window.width)-margin*2
 
 var Mapbox = require('react-native-mapbox-gl');
@@ -180,7 +180,7 @@ var MapPage = React.createClass({
 
 		// Is the user the creator, a guest or not
   		if (this.state.event_creator_id == this.state.user_id) { 
-			loginButton = <Button onPress={this.deleteEvent} style={styles.main_button}>Delete</Button>;
+			loginButton = <Button onPress={this.deleteEvent} style={styles.delete_button}>Delete</Button>;
 			this.setState({update_button: true});
 		} else if (this.state.event_users == true) {
 			loginButton = <Button onPress={this.leaveEvent} style={styles.main_button}>Leave</Button>;
@@ -206,6 +206,7 @@ var MapPage = React.createClass({
 	  	this.setState({event_users_length: event.users.length});
 		this.setState({event_id: event.id});
 	  	this.setState({event_creator_id: event.creator.id});
+	  	this.setState({event_creator_name: event.creator.name});
 	  	this.setState({event_creator_picture: event.creator.facebook_picture});
 
 	  	// See if current user is a guest of the event, if so, will show the leave button^^^
@@ -614,43 +615,30 @@ var MapPage = React.createClass({
 				   Event Modal
 				------------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
-				<Modal style={styles.events_modal} ref={"event_modal"} animationDuration={300} position={"bottom"} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onEventOpened} onClosingState={this.onEventClosingState} backdrop={false} >
-
-					<View style={{width: theWidth, backgroundColor: "#F7F7F7"}}>	
-						
-						<TouchableOpacity onPress={this.closeEvent} style={{alignItems: 'center'}}>
-						
-							<Image 
-								source={{uri: "https://cdn0.iconfinder.com/data/icons/slim-square-icons-basics/100/basics-08-128.png"}}
-								style={styles.arrow_icon}
-							/>
-						
-						</TouchableOpacity>
-
-
-					</View>
+				<Modal style={styles.events_modal} ref={"event_modal"} backdropOpacity={0.3} animationDuration={300} swipeToClose={this.state.swipeToClose} onClosed={this.onEventClosed} onOpened={this.onEventOpened} onClosingState={this.onEventClosingState}>
 
 					<Image 
 						source={{uri: this.state.event_creator_picture}}
 						style={styles.event_creator}
 					/>
 
-					<View style={{marginTop:10}}>
+					<Image 
+						source={{uri: "this.state.event_creator_picture"}}
+						style={styles.event_guest_icon}
+					/>
 
-						<Text style={styles.profile_name}>
-							{this.state.event_title}
-						</Text>
-
-						<Text style={styles.profile_name}>
-							{this.state.event_description}
-						</Text>
-
-						<Text style={styles.profile_name}>
-							{this.state.event_users_length} other(s) going!
-						</Text>
+					<Text style={styles.event_creator_name}>
+						{this.state.event_creator_name}
+					</Text>
 
 
-					</View>
+					<Text style={styles.event_title}>
+						{this.state.event_title}
+					</Text>
+
+					<Text style={styles.event_description}>
+						{this.state.event_description}
+					</Text>
 
 				</Modal>
 
@@ -791,10 +779,10 @@ var styles = StyleSheet.create({
 
 	events_modal: {
 		alignItems: 'center',
-		height:200,
+		height: 250,
 		width:theWidth,
-		bottom: 45 + 2*margin,
-		borderRadius: 2,
+		backgroundColor: "#FD7865",
+		borderRadius: 20,
 		shadowRadius: 2,
 		shadowOffset: {width: 1, height: 1},
 		shadowColor: 'black',
@@ -825,7 +813,25 @@ var styles = StyleSheet.create({
 
 	main_button: {
 		position: 'absolute',
-		backgroundColor: "rgba(255,115,113,0.95)",
+		backgroundColor: "rgba(253,120,101,0.95)",
+		color: "white",
+		textAlign: "center",
+		padding: 15,
+		margin: margin,
+		bottom: margin,
+		shadowRadius: 2,
+		shadowOffset: {width: 1, height: 1},
+		shadowColor: 'black',
+		shadowOpacity: 0.45,
+		letterSpacing: 1,
+		fontSize: 15,
+		fontFamily: 'Helvetica',
+		width: theWidth,
+	},
+
+	delete_button: {
+		position: 'absolute',
+		backgroundColor: "#E8534F",
 		color: "white",
 		textAlign: "center",
 		padding: 15,
@@ -861,8 +867,9 @@ var styles = StyleSheet.create({
   	},
 
   	profile_name: {
-  		color: "black",
+		color: "#FFF",
   		fontSize:18,
+  		textAlign: "center",
   		fontWeight: "600",
   		marginTop:10,
   	},
@@ -878,9 +885,36 @@ var styles = StyleSheet.create({
   	},
 
   	event_creator: {
-  		height: 60,
-  		width: 60,
-  		borderRadius: 30,
+  		height: 90,
+  		borderWidth: 2,
+  		borderColor: "white",
+  		width: 90,
+  		marginTop: 20,
+  		borderRadius: 45,
+  	},
+
+  	event_creator_name: {
+  		color: "#FFF",
+  		fontSize:14,
+  		fontWeight: "500",
+  		marginTop:5,
+  		textAlign: "center",
+  	},
+
+  	event_title: {
+  		color: "#FFF",
+  		fontSize:20,
+  		textAlign: "center",
+  		fontWeight: "600",
+  		marginTop:30,
+  	},
+
+  	event_description: {
+  		color: "#FFF",
+  		fontSize:13,
+  		textAlign: "center",
+  		fontWeight: "400",
+  		marginTop:5,
   	},
 
 	login: {
