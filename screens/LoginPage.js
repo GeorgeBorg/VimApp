@@ -23,8 +23,6 @@ const {
 	AccessToken,
 } = FBSDK;
 
-var MapPage = require('./MapPage');
-
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
    Main Screen
 ------------------------------------------------------------------------------------------------------------------------------------------------------ */
@@ -38,7 +36,7 @@ class LoginPage extends Component {
 
 				<View style={styles.container}>
 
-					<Image style= {styles.loginlogo} source={require('./crowd-login.png')} />
+					<Image style= {styles.loginlogo} source={require('../crowd-login.png')} />
 
 					<LoginButton
 						style={styles.button}
@@ -110,8 +108,21 @@ class LoginPage extends Component {
 	}
 
 	_loadMapPage() {
-		this.props.navigator.replace({
-			component: MapPage
+		this.props.navigator.resetTo({
+			screen: "VimApp.MapPage",
+		    navigatorStyle: {
+		    	navBarTextColor: '#fff',
+			  	navBarBackgroundColor: '#074E64',
+			  	navBarButtonColor: '#fff',
+		      	statusBarTextColorScheme: 'light'
+		    },
+		    title: "Crowd",
+		    navigatorButtons: {
+	    		rightButtons: [{
+			        title: 'Inbox', // for a textual button, provide the button title (label)
+			        id: 'inbox', // id for this button, given in onNavigatorEvent(event) to help understand which button was clicked			        showAsAction: 'ifRoom' // optional, Android only. Control how the button is displayed in the Toolbar. Accepted valued: 'ifRoom' (default) - Show this item as a button in an Action Bar if the system decides there is room for it. 'always' - Always show this item as a button in an Action Bar. 'withText' - When this item is in the action bar, always show it with a text label even if it also has an icon specified. 'never' - Never show this item as a button in an Action Bar.
+		      	}],
+		    },
 		});
 	};
 

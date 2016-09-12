@@ -9,6 +9,9 @@
 
 #import "AppDelegate.h"
 #import "RCTRootView.h"
+#import "RCCManager.h"
+
+
 //Added import statement
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
@@ -58,6 +61,8 @@
                                                    launchOptions:launchOptions];
   
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  
+  [[RCCManager sharedInstance] initBridgeWithBundleURL:jsCodeLocation];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;

@@ -21,6 +21,7 @@
 		8726FC371CE8B1D900157D69 /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8726FC361CE8B1D900157D69 /* Mapbox.framework */; };
 		8726FC381CE8B1D900157D69 /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8726FC361CE8B1D900157D69 /* Mapbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8726FC451CE8B30D00157D69 /* libRCTMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8726FC331CE8B1A600157D69 /* libRCTMapboxGL.a */; };
+		8761D0131D86E0410059EB1C /* libReactNativeControllers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8761D0111D86DFF50059EB1C /* libReactNativeControllers.a */; };
 		9A39A43962F22ED654DC6DB5 /* libPods-VimApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79132203D6D6AD4E0F43368B /* libPods-VimApp.a */; };
 		A13A17927E23400C90E59736 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CB79E06D75E14EA4918E44F0 /* Octicons.ttf */; };
 		E75F9E9344A24A6A95251B71 /* libRCTMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03080544C79240B9B1679450 /* libRCTMapboxGL.a */; };
@@ -71,6 +72,13 @@
 			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
 			remoteInfo = RCTMapboxGLTests;
 		};
+		8761D0101D86DFF50059EB1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8761D0081D86DFF50059EB1C /* ReactNativeControllers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D8AFADBD1BEE6F3F00A4592D;
+			remoteInfo = ReactNativeControllers;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -112,6 +120,7 @@
 		870321CF1CEF1D810016A3FD /* libFBSDKCoreKit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFBSDKCoreKit.a; path = "../../../../../Library/Developer/Xcode/DerivedData/VimApp-eqjdxljhqeikojgadbwgeqbpiaeo/Build/Products/Debug-iphonesimulator/FBSDKCoreKit/libFBSDKCoreKit.a"; sourceTree = "<group>"; };
 		8726FC2D1CE8B1A500157D69 /* RCTMapboxGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTMapboxGL.xcodeproj; path = "../node_modules/react-native-mapbox-gl/ios/RCTMapboxGL.xcodeproj"; sourceTree = "<group>"; };
 		8726FC361CE8B1D900157D69 /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
+		8761D0081D86DFF50059EB1C /* ReactNativeControllers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeControllers.xcodeproj; path = "../node_modules/react-native-controllers/ios/ReactNativeControllers.xcodeproj"; sourceTree = "<group>"; };
 		8E2EF3250AAD49FF8AE90FEA /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		BA97E3A77AE842508473C4F0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		CB79E06D75E14EA4918E44F0 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -132,6 +141,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8761D0131D86E0410059EB1C /* libReactNativeControllers.a in Frameworks */,
 				8726FC451CE8B30D00157D69 /* libRCTMapboxGL.a in Frameworks */,
 				9A39A43962F22ED654DC6DB5 /* libPods-VimApp.a in Frameworks */,
 				8726FC371CE8B1D900157D69 /* Mapbox.framework in Frameworks */,
@@ -203,6 +213,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				8761D0081D86DFF50059EB1C /* ReactNativeControllers.xcodeproj */,
 				63D9F76A5962487CAC76DA2E /* RCTMapboxGL.xcodeproj */,
 				43222A8D797744D9AE10D21A /* RNVectorIcons.xcodeproj */,
 			);
@@ -256,6 +267,14 @@
 			children = (
 				8726FC331CE8B1A600157D69 /* libRCTMapboxGL.a */,
 				8726FC351CE8B1A600157D69 /* RCTMapboxGLTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8761D0091D86DFF50059EB1C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8761D0111D86DFF50059EB1C /* libReactNativeControllers.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -352,6 +371,10 @@
 					ProjectRef = 63D9F76A5962487CAC76DA2E /* RCTMapboxGL.xcodeproj */;
 				},
 				{
+					ProductGroup = 8761D0091D86DFF50059EB1C /* Products */;
+					ProjectRef = 8761D0081D86DFF50059EB1C /* ReactNativeControllers.xcodeproj */;
+				},
+				{
 					ProductGroup = 870321A71CEF1AAC0016A3FD /* Products */;
 					ProjectRef = 43222A8D797744D9AE10D21A /* RNVectorIcons.xcodeproj */;
 				},
@@ -398,6 +421,13 @@
 			fileType = wrapper.cfbundle;
 			path = RCTMapboxGLTests.xctest;
 			remoteRef = 8726FC341CE8B1A600157D69 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8761D0111D86DFF50059EB1C /* libReactNativeControllers.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeControllers.a;
+			remoteRef = 8761D0101D86DFF50059EB1C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -616,6 +646,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdklogin/iOS",
 					"$(SRCROOT)/../node_modules/react-native-mapbox-gl/ios/RCTMapboxGL/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-controllers/ios/**",
 				);
 				INFOPLIST_FILE = VimApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -645,6 +676,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdklogin/iOS",
 					"$(SRCROOT)/../node_modules/react-native-mapbox-gl/ios/RCTMapboxGL/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-controllers/ios/**",
 				);
 				INFOPLIST_FILE = VimApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

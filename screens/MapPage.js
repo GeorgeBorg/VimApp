@@ -1,10 +1,8 @@
 'use strict';
 
 import React, { Component } from 'react';
-import NavigationBar from 'react-native-navbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
-
 
 import {
 	AppRegistry,
@@ -19,6 +17,7 @@ import {
   	Image,
   	ScrollView,
   	Dimensions,
+  	StatusBar
 } from 'react-native';
 
 const FBSDK = require('react-native-fbsdk');
@@ -60,17 +59,8 @@ var Event = t.struct({
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------
    Main Page
 ------------------------------------------------------------------------------------------------------------------------------------------------------ */
-var icon = React.createClass({
-	render() {
-		<Image 
-			style={styles.icon}
-			source={{uri: "http://www.freeiconspng.com/uploads/settings-icon-4.png"}}
-		/>
-	}
-})
 
 var MapPage = React.createClass({
-
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
   	   Initializers
@@ -145,12 +135,23 @@ var MapPage = React.createClass({
 			},
 			zoom: 14,
 			animated: true,
-	      		isOpen: false,
+      		isOpen: false,
 			swipeToClose: true,
 			sliderValue: 0.3,
-	      		name: 'initial',
-    		}
+      		name: 'initial',
+		}
 
+  	},
+
+  	onNavigatorEvent(event) { // this is the onPress handler for the two buttons together
+	    if (event.type == 'NavBarButtonPress') { // this is the event type for button presses
+	      if (event.id == 'inbox') { // this is the same id field from the static navigatorButtons definition
+	        AlertIOS.alert('NavBar', 'Inbox button pressed');
+	      }
+	      if (event.id == 'add') {
+	        AlertIOS.alert('NavBar', 'Add button pressed');
+	      }
+	    }
   	},
 
   	/* ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -372,7 +373,7 @@ var MapPage = React.createClass({
         		"coordinates": [event.latitude, event.longitude],
 	        	'id': event.id.toString(),				 	
 		  		annotationImage: {
-	          		uri: icon,
+	          		url: event.creator.facebook_picture,
 	          		height: 20,
 	          		width: 20,
 		        }
@@ -853,7 +854,7 @@ var styles = StyleSheet.create({
 		shadowOffset: {width: 1, height: 1},
 		shadowColor: 'black',
 		shadowOpacity: 0.45,
-		bottom: 610,
+		bottom: 410,
 		left: 10,
 		width:30,
 		height:30,
