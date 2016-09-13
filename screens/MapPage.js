@@ -120,6 +120,9 @@ var MapPage = React.createClass({
 		};
 
 		this.setState({inviteLinkContent: inviteLinkContent});
+
+	    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
+
 	},
 
   	componentWillUnmount: function() {
@@ -146,10 +149,15 @@ var MapPage = React.createClass({
   	onNavigatorEvent(event) { // this is the onPress handler for the two buttons together
 	    if (event.type == 'NavBarButtonPress') { // this is the event type for button presses
 	      if (event.id == 'inbox') { // this is the same id field from the static navigatorButtons definition
-	        AlertIOS.alert('NavBar', 'Inbox button pressed');
-	      }
-	      if (event.id == 'add') {
-	        AlertIOS.alert('NavBar', 'Add button pressed');
+	        this.props.navigator.push({
+				screen: 'VimApp.Messenger', // unique ID registered with Navigation.registerScreentitle: undefined, // navigation bar title of the pushed screen (optional)
+				titleImage: require('./../logo.png'), //navigation bar title image instead of the title text of the pushed screen (optional)
+				passProps: {}, // simple serializable object that will pass as props to the pushed screen (optional)
+				animated: true, // does the push have transition animation or does it happen immediately (optional)backButtonTitle: Back, // override the back button title (optional)
+				backButtonHidden: false, // hide the back button altogether (optional)
+				navigatorStyle: {}, // override the navigator style for the pushed screen (optional)
+				navigatorButtons: {} // override the nav buttons for the pushed screen (optional)
+			});
 	      }
 	    }
   	},

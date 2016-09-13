@@ -116,7 +116,7 @@ class LoginPage extends Component {
 			  	navBarButtonColor: '#fff',
 		      	statusBarTextColorScheme: 'light'
 		    },
-		    title: "Crowd",
+			titleImage: require('./../logo.png'), //navigation bar title image instead of the title text of the pushed screen (optional)
 		    navigatorButtons: {
 	    		rightButtons: [{
 			        title: 'Inbox', // for a textual button, provide the button title (label)

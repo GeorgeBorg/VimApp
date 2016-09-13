@@ -12,12 +12,16 @@ import {
 	View,
 	TouchableHighlight,
 	AlertIOS,
-  	TextInput,
-  	TouchableOpacity,
-  	Image,
-  	ScrollView,
-  	Dimensions,
+	TextInput,
+	TouchableOpacity,
+	Image,
+	ScrollView,
+	Dimensions,
 } from 'react-native';
+
+const window = Dimensions.get('window');
+var margin = (window.width)*0.1
+var theWidth = (window.width)-margin*2
 
 
 class Messenger extends React.Component {
